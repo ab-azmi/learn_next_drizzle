@@ -1,9 +1,9 @@
+import createPost from "@/server/actions/create-post";
 import getPosts from "@/server/actions/get-posts";
-import Image from "next/image";
 
 export default async function Home() {
   const {error, success} = await getPosts();
-  console.log(success);
+
   if (error) throw new Error(error);
 
   return (
@@ -14,6 +14,10 @@ export default async function Home() {
       </div>
     ))}
     <h1>Welcome to next d JS</h1>
+    <form action={createPost}>
+      <input className="text-black" type="text" name="title" id="title" />
+      <button type="submit">Submit</button>
+    </form>
    </main>
   );
 }
