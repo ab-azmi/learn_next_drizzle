@@ -11,21 +11,25 @@ export default async function Nav() {
         <header className="py-8">
             <nav>
                 <ul className="flex justify-between">
-                    <li>Logo</li>
+                    <li>
+                        <Link href="/">
+                            Logo
+                        </Link>
+                    </li>
                     {!session ? (
                         <li>
                             <Button asChild>
-                                <Link href="/api/auth/signin"
+                                <Link href="/auth/login"
                                     className="flex gap-2">
-                                    <LogIn size={16}/>
+                                    <LogIn size={16} />
                                     Sign in
                                 </Link>
                             </Button>
                         </li>
                     ) : (
-                    <li>
-                        <UserButton expires={session?.expires} user={session?.user}/>
-                    </li>
+                        <li>
+                            <UserButton expires={session?.expires} user={session?.user} />
+                        </li>
                     )}
                 </ul>
             </nav>

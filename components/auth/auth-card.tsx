@@ -9,6 +9,7 @@ type CardWrapperProps = {
     backButtonHref: string,
     backButtonLabel: string,
     showSocials: boolean,
+    classes?: string
 }
 
 const AuthCard = ({
@@ -17,9 +18,10 @@ const AuthCard = ({
     backButtonHref,
     backButtonLabel,
     showSocials,
+    classes
 }: CardWrapperProps) => {
     return (
-        <Card className="">
+        <Card className={classes}>
             <CardHeader>
                 <CardTitle>{cardTitle}</CardTitle>
             </CardHeader>
