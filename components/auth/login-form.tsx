@@ -11,7 +11,7 @@ const LoginForm = () => {
             showSocials={true}
             >
                 <div>
-                    hey
+                    
                 </div>
             </AuthCard>
     )
