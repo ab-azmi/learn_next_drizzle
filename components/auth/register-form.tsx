@@ -4,48 +4,39 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import AuthCard from "./auth-card"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { loginDefaultValues, loginSchema } from "@/types/login-schema"
+import { RegisterSchema, registerDefaultValues } from "@/types/register-schema"
 import { z } from "zod"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import emailSignIn from "@/server/actions/email-signin"
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react"
 
-const LoginForm = () => {
+const RegisterForm = () => {
     //form
     const form = useForm({
         //validation with zod
-        resolver: zodResolver(loginSchema),
+        resolver: zodResolver(RegisterSchema),
         //default empty values
-        defaultValues: loginDefaultValues
+        defaultValues: registerDefaultValues
     });
 
     //action
-    const { execute, status } = useAction(emailSignIn, {
-        onSuccess: () => {
-            
-        },
-        onError: (error) => {
-            
-        }
-    
-    });
+
 
     //states
     const [error, setError] = useState<string | null>(null);
 
     //submit func
-    const onSubmit = (values: z.infer<typeof loginSchema>) => {
-        execute(values);
+    const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
+        
     }
 
     return (
         <AuthCard
-            cardTitle="Welcome Back"
-            backButtonHref="/auth/register"
-            backButtonLabel="Create an account"
+            cardTitle="Create an account 🎉"
+            backButtonHref="/auth/login"
+            backButtonLabel="Already have an account?"
             showSocials={true}
             classes="max-w-xl mx-auto"
         >
@@ -53,6 +44,25 @@ const LoginForm = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="flex flex-col gap-3">
+                            {/* Name */}
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Username</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="johnsnow555"
+                                                autoComplete="name" />
+                                        </FormControl>
+                                        <FormDescription />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}>
+                            </FormField>
                             {/* Email */}
                             <FormField
                                 control={form.control}
@@ -90,13 +100,9 @@ const LoginForm = () => {
                                     </FormItem>
                                 )}>
                             </FormField>
-                            {/* Back */}
-                            <Button size={'sm'} variant={'link'} asChild className="w-fit">
-                                <Link href={'/auth/reset'}>Forgot your password?</Link>
-                            </Button>
                             {/* Submit */}
                             <Button className={status === 'executing' ? 'animate-pulse' : ''}>
-                                Login
+                                Register
                             </Button>
                         </div>
                     </form>
@@ -106,4 +112,4 @@ const LoginForm = () => {
     )
 }
 
-export default LoginForm
+export default RegisterForm
