@@ -95,7 +95,7 @@ const LoginForm = () => {
                                 <Link href={'/auth/reset'}>Forgot your password?</Link>
                             </Button>
                             {/* Submit */}
-                            <Button className={status === 'executing' ? 'animate-pulse' : ''}>
+                            <Button>
                                 Login
                             </Button>
                         </div>

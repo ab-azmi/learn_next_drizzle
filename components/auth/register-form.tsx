@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react"
+import emailRegister from "@/server/actions/email-register"
 
 const RegisterForm = () => {
     //form
@@ -22,14 +23,23 @@ const RegisterForm = () => {
     });
 
     //action
+    const {execute, status} = useAction(emailRegister, {
+        onSuccess(res){
+            if(res?.data?.success){
+                console.log(res.data.success)
+            }
+        },
+        onError(error){
 
+        }
+    })
 
     //states
     const [error, setError] = useState<string | null>(null);
 
     //submit func
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
-        
+        execute(values)
     }
 
     return (
@@ -101,7 +111,7 @@ const RegisterForm = () => {
                                 )}>
                             </FormField>
                             {/* Submit */}
-                            <Button className={status === 'executing' ? 'animate-pulse' : ''}>
+                            <Button>
                                 Register
                             </Button>
                         </div>
