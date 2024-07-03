@@ -29,6 +29,20 @@
       "when": 1719932290534,
       "tag": "0003_sour_northstar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1719993959105,
+      "tag": "0004_mature_sabretooth",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1719997543479,
+      "tag": "0005_public_mephistopheles",
+      "breakpoints": true
     }
   ]
 }
