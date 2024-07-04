@@ -26,8 +26,8 @@ const RegisterForm = () => {
     });
 
     //states
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<string | null>(null);
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
 
     //action
     const {execute, status} = useAction(emailRegister, {
@@ -115,9 +115,9 @@ const RegisterForm = () => {
                                 )}>
                             </FormField>
                             {/* Success */}
-                            <FormSuccess message={success || ''}/>
+                            {success !== '' && <FormSuccess message={success} />}
                             {/* Error */}
-                            <FormError message={error || ''}/>
+                            {error !== '' && <FormError message={error} />}
                             {/* Submit */}
                             <Button disabled={status === 'executing'}>
                                 {status === 'executing' && (

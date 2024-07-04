@@ -7,7 +7,7 @@ import { FaGithub } from 'react-icons/fa'
 
 export default function Socials() {
     return (
-        <div className="flex flex-col items-center w-full gap-4">
+        <div className="flex items-center w-full gap-4">
             <Button 
                 variant={"outline"}
                 className="w-full flex gap-4"

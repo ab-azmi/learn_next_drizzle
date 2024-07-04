@@ -12,6 +12,9 @@ import Link from "next/link"
 import emailSignIn from "@/server/actions/email-signin"
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react"
+import FormError from "./form-error"
+import FormSuccess from "./form-success"
+import { Loader2 } from "lucide-react"
 
 const LoginForm = () => {
     //form
@@ -22,19 +25,22 @@ const LoginForm = () => {
         defaultValues: loginDefaultValues
     });
 
+    //states
+    const [error, setError] = useState<string>('');
+    const [success, setSuccess] = useState<string>('');
+
     //action
     const { execute, status } = useAction(emailSignIn, {
-        onSuccess: () => {
-            
-        },
-        onError: (error) => {
-            
+        onSuccess: (res) => {
+            if(res?.data?.success){
+                setSuccess(res.data.success)
+            }
+            if(res?.data?.error){
+                setError(res.data.error)
+            }
         }
-    
-    });
 
-    //states
-    const [error, setError] = useState<string | null>(null);
+    });
 
     //submit func
     const onSubmit = (values: z.infer<typeof loginSchema>) => {
@@ -94,9 +100,19 @@ const LoginForm = () => {
                             <Button size={'sm'} variant={'link'} asChild className="w-fit">
                                 <Link href={'/auth/reset'}>Forgot your password?</Link>
                             </Button>
+                            {/* Error */}
+                            {error !== '' && <FormError message={error}/>}
+                            {/* Success */}
+                            {success !== '' && <FormSuccess message={success}/>}
                             {/* Submit */}
-                            <Button>
-                                Login
+                            <Button disabled={status === 'executing'}>
+                                {status === 'executing' && (
+                                    <div>
+                                        <Loader2 className="animate-spin inline-block mr-2" size={16} />
+                                        Logging...
+                                    </div>
+                                )}
+                                {status !== 'executing' && 'Login'}
                             </Button>
                         </div>
                     </form>
