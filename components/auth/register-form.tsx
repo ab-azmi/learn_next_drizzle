@@ -12,6 +12,8 @@ import Link from "next/link"
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react"
 import emailRegister from "@/server/actions/email-register"
+import FormSuccess from "./form-success"
+import FormError from "./form-error"
 
 const RegisterForm = () => {
     //form
@@ -22,20 +24,21 @@ const RegisterForm = () => {
         defaultValues: registerDefaultValues
     });
 
+    //states
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<string | null>(null);
+
     //action
     const {execute, status} = useAction(emailRegister, {
         onSuccess(res){
             if(res?.data?.success){
-                console.log(res.data.success)
+                setSuccess(res.data.success)
             }
-        },
-        onError(error){
-
+            if(res?.data?.error){
+                setError(res.data.error)
+            }
         }
     })
-
-    //states
-    const [error, setError] = useState<string | null>(null);
 
     //submit func
     const onSubmit = (values: z.infer<typeof RegisterSchema>) => {
@@ -110,6 +113,10 @@ const RegisterForm = () => {
                                     </FormItem>
                                 )}>
                             </FormField>
+                            {/* Success */}
+                            <FormSuccess message={success || ''}/>
+                            {/* Error */}
+                            <FormError message={error || ''}/>
                             {/* Submit */}
                             <Button>
                                 Register
