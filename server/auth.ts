@@ -3,6 +3,11 @@ import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { db } from "@/server"
 import Google from "next-auth/providers/google"
 import Github from "next-auth/providers/github"
+import Credentials from 'next-auth/providers/credentials'
+import { loginSchema } from "@/types/login-schema"
+import { eq } from "drizzle-orm"
+import { users } from "./schema"
+import bcrypt from 'bcrypt'
  
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET!,
@@ -18,6 +23,30 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         clientId: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         allowDangerousEmailAccountLinking: true,
+    }),
+    Credentials({
+      authorize: async (credentials) => {
+        //vailidate if login safely parse the credentials
+        const validatedFields = loginSchema.safeParse(credentials)
+
+        if(validatedFields.success){
+          const {email, password} = validatedFields.data
+
+          const user = await db.query.users.findFirst({
+            where: eq(users.email, email)
+          })
+          
+          if(!user || !user.password)
+            return null;
+          
+          const passwordMatch = await bcrypt.compare(password, user.password)
+          
+          if(passwordMatch)
+              return user;
+        }
+
+        return null;
+      }
     })
   ],
 })
