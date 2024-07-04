@@ -14,6 +14,7 @@ import { useState } from "react"
 import emailRegister from "@/server/actions/email-register"
 import FormSuccess from "./form-success"
 import FormError from "./form-error"
+import { Loader2 } from "lucide-react"
 
 const RegisterForm = () => {
     //form
@@ -118,8 +119,14 @@ const RegisterForm = () => {
                             {/* Error */}
                             <FormError message={error || ''}/>
                             {/* Submit */}
-                            <Button>
-                                Register
+                            <Button disabled={status === 'executing'}>
+                                {status === 'executing' && (
+                                    <div>
+                                        <Loader2 className="animate-spin inline-block mr-2" size={16} />
+                                        Registering...
+                                    </div>
+                                )}
+                                {status !== 'executing' && 'Register'}
                             </Button>
                         </div>
                     </form>

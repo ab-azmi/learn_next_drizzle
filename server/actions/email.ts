@@ -9,7 +9,7 @@ const domain = getBaseURL();
 
 
 const sendVerificationEmail = async (email: string, token: string) => {
-    const confirmLink = `${domain}/new-verification?token=${token}`;
+    const confirmLink = `${domain}/auth/new-verification?token=${token}`;
    
     const { data, error } = await resend.emails.send({
         from: 'Acme <onboarding@resend.dev>',
