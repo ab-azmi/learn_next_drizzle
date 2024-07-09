@@ -2,7 +2,7 @@
 
 import { eq } from "drizzle-orm"
 import { db } from ".."
-import { emailTokens, users } from "../schema"
+import { emailTokens, passwordResetTokens, users } from "../schema"
 
 export const getExistingTokenByEmail = async (email: string) => {
     try{
@@ -71,4 +71,15 @@ export const newVerification = async (token: string) => {
 
     return { success: "Email verified successfully"}
 
+}
+
+export const getPassowrdResetTokenByToken = async (token: string) => {
+    try {
+        const passwordResetToken = db.query.passwordResetTokens.findFirst({
+            where: eq(passwordResetTokens.token, token)
+        })
+        return passwordResetToken;
+    } catch (error) {  
+        return null;
+    }
 }

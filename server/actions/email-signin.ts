@@ -26,7 +26,7 @@ const emailSignIn = action
     
             if(!existingUser?.emailVerified){
                 //Send verification email
-                const verificationToken = await generateEmailVerificationToken(existingUser.email)
+                const verificationToken = await generateEmailVerificationToken(existingUser?.email!)
                 await sendVerificationEmail(verificationToken[0].email, verificationToken[0].token)
                 return {success: "Email not verified, verification email sent"}
             }
@@ -47,13 +47,13 @@ const emailSignIn = action
             if(error instanceof AuthError){
                 switch(error.type){
                     case "CredentialsSignin":
-                        return {error: error.type}
+                        return {error: 'Email or password is incorrect'}
                     case "AccessDenied":
-                        return {error: error.message}
+                        return {error: error.name}
                     case 'OAuthSignInError':
-                        return {error: error.message}
+                        return {error: error.name}
                     default:
-                        return {error: error.message}
+                        return {error: "Something went wrong"}
                 }
             }
 
