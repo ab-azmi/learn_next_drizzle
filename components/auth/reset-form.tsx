@@ -52,7 +52,7 @@ const ResetForm = () => {
             cardTitle="Forgot your password?"
             backButtonHref="/auth/login"
             backButtonLabel="Back to login"
-            showSocials={true}
+            showSocials={false}
             classes="max-w-xl mx-auto"
         >
             <div>
@@ -78,10 +78,6 @@ const ResetForm = () => {
                                     </FormItem>
                                 )}>
                             </FormField>
-                            {/* Back */}
-                            <Button size={'sm'} variant={'link'} asChild className="w-fit">
-                                <Link href={'/auth/reset'}>Forgot your password?</Link>
-                            </Button>
                             {/* Error */}
                             {error !== '' && <FormError message={error}/>}
                             {/* Success */}

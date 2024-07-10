@@ -15,6 +15,7 @@ import FormSuccess from "./form-success"
 import { Loader2 } from "lucide-react"
 import { newPasswordSchema, newPasswordSchemaDefaultValues } from "@/types/new-password-schema"
 import newPassword from "@/server/actions/new-password"
+import { useSearchParams } from "next/navigation"
 
 const NewPasswordForm = () => {
     //form
@@ -24,6 +25,10 @@ const NewPasswordForm = () => {
         //default empty values
         defaultValues: newPasswordSchemaDefaultValues
     });
+
+    //params token
+    const searchParams = useSearchParams();
+    const token = searchParams.get('token');
 
     //states
     const [error, setError] = useState<string>('');
@@ -44,7 +49,10 @@ const NewPasswordForm = () => {
 
     //submit func
     const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
-        execute(values);
+        execute({
+            password: values.password,
+            token: token
+        });
     }
 
     return (
@@ -52,7 +60,7 @@ const NewPasswordForm = () => {
             cardTitle="Enter a new password"
             backButtonHref="/auth/login"
             backButtonLabel="Back to login"
-            showSocials={true}
+            showSocials={false}
             classes="max-w-xl mx-auto"
         >
             <div>

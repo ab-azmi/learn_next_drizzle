@@ -7,13 +7,21 @@ import { db } from "..";
 import { passwordResetTokens, users } from "../schema";
 import { eq } from "drizzle-orm";
 import bcrypt from 'bcrypt';
+import { Pool } from '@neondatabase/serverless';
+import { drizzle } from "drizzle-orm/neon-serverless";
 
 const action = createSafeActionClient();
 
 const newPassword = action
     .schema(newPasswordSchema)
     .action(async ({parsedInput: {password, token}}) => {
-        //Check token
+        //perform pool connection to neon db for transaction
+        const pool = new Pool({
+            connectionString: process.env.POSTGRESS_URL!
+        });
+        const dbPool = drizzle(pool);
+
+        //Check token exists
         if (!token) {
             return {error: 'Invalid token'}
         }
@@ -42,7 +50,7 @@ const newPassword = action
         const hashedPassword = await bcrypt.hash(password, 10);
 
         //transaction to update the user password and delete the token
-        await db.transaction(async tx => {
+        await dbPool.transaction(async tx => {
             await tx.update(users).set({
                 password: hashedPassword
             }).where(eq(users.id, existingUser.id));
