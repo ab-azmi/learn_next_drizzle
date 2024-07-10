@@ -4,7 +4,7 @@ interface EmailTemplateProps {
   confirmLink: string;
 }
 
-const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+export const VerifyEmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   confirmLink,
 }) => (
   <div>
@@ -12,4 +12,11 @@ const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
   </div>
 );
 
-export default EmailTemplate;
+export const ResetPasswordEmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+  confirmLink,
+}) => (
+  <div>
+    <p>Click to <a href={confirmLink}>reset your password</a></p>
+  </div>
+);
+

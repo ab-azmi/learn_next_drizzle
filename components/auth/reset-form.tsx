@@ -13,16 +13,16 @@ import { useState } from "react"
 import FormError from "./form-error"
 import FormSuccess from "./form-success"
 import { Loader2 } from "lucide-react"
-import { newPasswordSchema, newPasswordSchemaDefaultValues } from "@/types/new-password-schema"
-import newPassword from "@/server/actions/new-password"
+import { ResetSchema, ResetSchemaDefaultValues } from "@/types/reset-schema"
+import resetPassword from "@/server/actions/password-reset"
 
-const NewPasswordForm = () => {
+const ResetForm = () => {
     //form
     const form = useForm({
         //validation with zod
-        resolver: zodResolver(newPasswordSchema),
+        resolver: zodResolver(ResetSchema),
         //default empty values
-        defaultValues: newPasswordSchemaDefaultValues
+        defaultValues: ResetSchemaDefaultValues
     });
 
     //states
@@ -30,7 +30,7 @@ const NewPasswordForm = () => {
     const [success, setSuccess] = useState<string>('');
 
     //action
-    const { execute, status } = useAction(newPassword, {
+    const { execute, status } = useAction(resetPassword, {
         onSuccess: (res) => {
             if(res?.data?.success){
                 setSuccess(res.data.success)
@@ -43,13 +43,13 @@ const NewPasswordForm = () => {
     });
 
     //submit func
-    const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
+    const onSubmit = (values: z.infer<typeof ResetSchema>) => {
         execute(values);
     }
 
     return (
         <AuthCard
-            cardTitle="Enter a new password"
+            cardTitle="Forgot your password?"
             backButtonHref="/auth/login"
             backButtonLabel="Back to login"
             showSocials={true}
@@ -62,15 +62,16 @@ const NewPasswordForm = () => {
                             {/* Password */}
                             <FormField
                                 control={form.control}
-                                name="password"
+                                name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password</FormLabel>
+                                        <FormLabel>Email</FormLabel>
                                         <FormControl>
                                             <Input
-                                                type="password"
+                                                type="email"
                                                 {...field}
-                                                placeholder="*******" />
+                                                autoComplete="email"
+                                                placeholder="anjing@gmail.com" />
                                         </FormControl>
                                         <FormDescription />
                                         <FormMessage />
@@ -103,4 +104,4 @@ const NewPasswordForm = () => {
     )
 }
 
-export default NewPasswordForm
+export default ResetForm

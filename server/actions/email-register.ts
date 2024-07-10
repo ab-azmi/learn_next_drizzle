@@ -7,7 +7,7 @@ import { db } from "@/server";
 import { eq } from "drizzle-orm";
 import { users } from "@/server/schema";
 import { generateEmailVerificationToken } from "./tokens";
-import sendVerificationEmail from "./email";
+import {sendVerificationEmail} from "./email";
 
 const action = createSafeActionClient();
 

@@ -6,7 +6,7 @@ import { db } from ".."
 import { eq } from "drizzle-orm"
 import { users } from "@/server/schema"
 import { generateEmailVerificationToken } from "./tokens"
-import sendVerificationEmail from "./email"
+import{ sendVerificationEmail} from "./email"
 import { AuthError } from "next-auth"
 import { signIn } from "../auth"
 
