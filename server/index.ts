@@ -4,10 +4,11 @@ import * as schema from '@/server/schema';
 import * as dotenv from "dotenv";
 
 dotenv.config({
-    path: ".env.local"
+    path: `.env.local`
 })
 
-const sql = neon(process.env.POSTGRESS_URL!);
+const sql = neon(`postgresql://${process.env.PGUSER}:${process.env.PGPASSWORD}@${process.env.PGHOST}/${process.env.PGDATABASE}?sslmode=require`);
+
 export const db = drizzle(sql, {
     schema, logger: true
 });

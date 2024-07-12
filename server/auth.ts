@@ -7,7 +7,7 @@ import Credentials from 'next-auth/providers/credentials'
 import { loginSchema } from "@/types/login-schema"
 import { eq } from "drizzle-orm"
 import { users } from "./schema"
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
  
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET!,

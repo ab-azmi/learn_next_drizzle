@@ -19,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("bg-slate-50 px-6 md:px-12 max-w-7xl mx-auto", `${inter.className}`)}>
+      <body className={cn("bg-slate-50", `${inter.className}`)}>
         <Nav/>
         {children}
       </body>

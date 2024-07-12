@@ -3,17 +3,18 @@ import { UserButton } from "./user-button";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { LogIn } from "lucide-react";
+import Logo from "./logo";
 
 export default async function Nav() {
     const session = await auth();
 
     return (
-        <header className="py-8">
+        <header className="px-14 py-8">
             <nav>
                 <ul className="flex justify-between">
                     <li>
-                        <Link href="/">
-                            Logo
+                        <Link href="/" aria-label="sprout and scribble logo">
+                            <Logo />
                         </Link>
                     </li>
                     {!session ? (
