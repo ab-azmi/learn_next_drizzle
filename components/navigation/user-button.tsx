@@ -1,13 +1,33 @@
 "use client"
 
 import { Session } from "next-auth"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuShortcut, DropdownMenuTrigger } from "../ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import Image from "next/image"
 import { LogOut, Moon, Settings, Sun, TruckIcon } from "lucide-react"
 import { signOut } from "@/server/auth"
+import { useTheme } from "next-themes"
+import React, { useEffect, useState } from "react"
+import { Switch } from "../ui/switch"
 
 export const UserButton = ({ user }: Session) => {
+    const { setTheme, theme } = useTheme();
+    const [checked, setChecked] = useState(theme === "dark");
+
+    const setSwitchState = () => {
+        switch (theme) {
+            case "dark":
+                setTheme("light");
+                break;
+            case "light":
+                setTheme("dark");
+                break;
+            case "system":
+                setTheme("system");
+                break;
+        }
+    }
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger>
@@ -42,13 +62,30 @@ export const UserButton = ({ user }: Session) => {
                     Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-300">
-                    <Sun size={16}/>
-                    <Moon size={16}/>
-                    <p>
-                        Theme
-                    </p>
+                    {theme === "dark" && (
+                        <Moon size={16} className="text-primary" />
+                    )}
+                    {theme === "light" && (
+                        <Sun size={16} className="text-yellow-500" />
+                    )}
+                    <DropdownMenuLabel className="capitalize">
+                        {theme == 'light' && (
+                            <span className="text-yellow-500 font-medium">Light</span>
+                        )}
+                        {theme == 'dark' && (
+                            <span className="text-primary font-medium">Light</span>
+                        )}
+                    </DropdownMenuLabel>
+                    <Switch className="ml-2" checked={checked} onCheckedChange={(e) => {
+                        setChecked((prev) => !prev);
+                        if (e) {
+                            setTheme("dark");
+                        } else {
+                            setTheme("light");
+                        }
+                    }} />
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-red-50 focus:text-red-700 font-medium" onClick={() => signOut()}>
+                <DropdownMenuItem className="focus:bg-destructive focus:text-white font-medium" onClick={() => signOut()}>
                     <LogOut size={16} className="mr-2" />
                     Sign out
                 </DropdownMenuItem>
