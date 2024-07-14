@@ -14,6 +14,8 @@ import { Switch } from "@/components/ui/switch"
 import FormError from "@/components/auth/form-error"
 import FormSuccess from "@/components/auth/form-success"
 import { useState } from "react"
+import { useAction } from "next-safe-action/hooks"
+import settings from "@/server/actions/settings"
 
 type SettingsProp = {
     session: Session
@@ -24,17 +26,38 @@ export default function SettingsCard(session: SettingsProp) {
     const [success, setSuccess] = useState<string | null>(null);
     const [avatarUploading, setAvatarUploading] = useState<boolean>(false);
 
+    // Form
     const form = useForm<z.infer<typeof SettingsSchema>>({
         resolver: zodResolver(SettingsSchema),
         defaultValues: {
             name: session.session.user?.name || undefined,
             email: session.session.user?.email || undefined,
-            // isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined,
+            password: undefined,
+            newPassword: undefined,
+            image: session.session.user?.image || undefined,
+            isTwoFactorEnabled: session.session.user?.isTwoFactorEnabled || undefined,
         }
     });
 
-    const onSubmit = (value: z.infer<typeof SettingsSchema>) => {
-        // execute(values)
+    // Action
+    const {execute, status} = useAction(settings, {
+        onSuccess: (res) => {
+            if(res?.data?.success){
+                setSuccess('Settings updated');
+            }
+            if(res?.data?.error){
+                setError(res.data.error);
+            }
+            form.reset();
+        },
+        onError: (error) => {
+            setError('An error occurred');
+        }
+    })
+
+    // Submit
+    const onSubmit = (values: z.infer<typeof SettingsSchema>) => {
+        execute(values)
     }
 
     return (
@@ -53,7 +76,7 @@ export default function SettingsCard(session: SettingsProp) {
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="John Did" {...field} />
+                                        <Input disabled={session.session.user.isOAuth} placeholder="John Did" {...field} />
                                     </FormControl>
                                     <FormDescription>
                                         This is your public display name.
@@ -98,7 +121,7 @@ export default function SettingsCard(session: SettingsProp) {
                                 <FormItem>
                                     <FormLabel>Password</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="********" {...field} />
+                                        <Input disabled={session.session.user.isOAuth} placeholder="********" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -112,7 +135,7 @@ export default function SettingsCard(session: SettingsProp) {
                                 <FormItem>
                                     <FormLabel>New Password</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="********" {...field} />
+                                        <Input disabled={session.session.user.isOAuth} placeholder="********" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -126,7 +149,7 @@ export default function SettingsCard(session: SettingsProp) {
                                 <FormItem>
                                     <FormLabel>Two Factor Auth</FormLabel>
                                     <FormControl>
-                                        <Switch />
+                                        <Switch className="block" disabled={session.session.user.isOAuth}/>
                                     </FormControl>
                                     <FormDescription>
                                         Enable two factor authentication
@@ -135,8 +158,8 @@ export default function SettingsCard(session: SettingsProp) {
                                 </FormItem>
                             )}
                         />
-                        <FormError />
-                        <FormSuccess />
+                        <FormError message={error || ''}/>
+                        <FormSuccess message={success || ''}/>
                         <Button disabled={status === 'executing' || avatarUploading} type="submit">Update Settings</Button>
                     </form>
                 </Form>
