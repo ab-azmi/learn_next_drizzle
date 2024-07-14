@@ -9,27 +9,16 @@ import { signOut } from "@/server/auth"
 import { useTheme } from "next-themes"
 import React, { useEffect, useState } from "react"
 import { Switch } from "../ui/switch"
+import { useRouter } from "next/navigation"
 
 export const UserButton = ({ user }: Session) => {
     const { setTheme, theme } = useTheme();
     const [checked, setChecked] = useState(theme === "dark");
 
-    const setSwitchState = () => {
-        switch (theme) {
-            case "dark":
-                setTheme("light");
-                break;
-            case "light":
-                setTheme("dark");
-                break;
-            case "system":
-                setTheme("system");
-                break;
-        }
-    }
+    const router = useRouter();
 
     return (
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
             <DropdownMenuTrigger>
                 <Avatar>
                     {user?.image && (
@@ -53,15 +42,15 @@ export const UserButton = ({ user }: Session) => {
                     <h1 className="text-xs font-bold">{user?.name}</h1>
                     <p className="text-xs">{user?.email}</p>
                 </div>
-                <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-300">
+                <DropdownMenuItem onClick={() => router.push('/dashboard/orders')} className="py-2 font-medium cursor-pointer">
                     <TruckIcon size={16} className="mr-2" />
                     My Orders
                 </DropdownMenuItem>
-                <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-300">
+                <DropdownMenuItem onClick={() => router.push('/dashboard/settings')} className="py-2 font-medium cursor-pointer">
                     <Settings size={16} className="mr-2" />
                     Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem className="py-2 font-medium cursor-pointer transition-all duration-300">
+                <DropdownMenuItem className="py-2 font-medium cursor-pointer">
                     {theme === "dark" && (
                         <Moon size={16} className="text-primary" />
                     )}
