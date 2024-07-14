@@ -56,6 +56,7 @@ const settings = action
             name: values.name,
             email: values.email,
             password: values.password,
+            image: values.image,
             twoFactorEnabled: values.isTwoFactorEnabled
         }).where(eq(users.id, session.user.id))
 

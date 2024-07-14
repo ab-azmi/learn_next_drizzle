@@ -16,6 +16,7 @@ import FormSuccess from "@/components/auth/form-success"
 import { useState } from "react"
 import { useAction } from "next-safe-action/hooks"
 import settings from "@/server/actions/settings"
+import { UploadButton } from "@/app/api/uploadthing/upload"
 
 type SettingsProp = {
     session: Session
@@ -40,12 +41,12 @@ export default function SettingsCard(session: SettingsProp) {
     });
 
     // Action
-    const {execute, status} = useAction(settings, {
+    const { execute, status } = useAction(settings, {
         onSuccess: (res) => {
-            if(res?.data?.success){
+            if (res?.data?.success) {
                 setSuccess('Settings updated');
             }
-            if(res?.data?.error){
+            if (res?.data?.error) {
                 setError(res.data.error);
             }
             form.reset();
@@ -92,10 +93,10 @@ export default function SettingsCard(session: SettingsProp) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Avatar</FormLabel>
-                                    <div className="flex">
+                                    <div className="flex gap-3">
                                         <Avatar>
                                             {form.getValues('image') && (
-                                                <AvatarImage src={form.getValues('image')!} width={42}/>
+                                                <AvatarImage src={form.getValues('image')!} width={42} />
                                             )}
                                             {!form.getValues('image') && (
                                                 <AvatarFallback className="bg-primary/25">
@@ -105,6 +106,26 @@ export default function SettingsCard(session: SettingsProp) {
                                                 </AvatarFallback>
                                             )}
                                         </Avatar>
+                                        <UploadButton
+                                            className="ut-button:ring-0 ut-allowed-content:text-primary ut-button:bg-primary ut-button:scale-90"
+                                            endpoint="avatarUploader"
+                                            onUploadBegin={() => setAvatarUploading(true)}
+                                            onUploadError={(error) => {
+                                                form.setError('image', { 
+                                                    type: 'validate',
+                                                    message: error.message 
+                                                })
+                                            }}
+                                            onClientUploadComplete={(res) => {
+                                                form.setValue('image', res[0].url)
+                                                setAvatarUploading(false)
+                                            }}
+                                            content={{
+                                                button({ ready }) {
+                                                    if (ready) return <div>Change avatar</div>
+                                                    return <div>Uploading...</div>
+                                                }
+                                            }} />
                                     </div>
                                     <FormControl>
                                         <Input type="hidden" placeholder="User image" {...field} />
@@ -150,10 +171,10 @@ export default function SettingsCard(session: SettingsProp) {
                                     <FormLabel>Two Factor Auth</FormLabel>
                                     <FormControl>
                                         <Switch
-                                            checked={field.value} 
+                                            checked={field.value}
                                             onCheckedChange={field.onChange}
-                                            className="block" 
-                                            disabled={session.session.user.isOAuth}/>
+                                            className="block"
+                                            disabled={session.session.user.isOAuth} />
                                     </FormControl>
                                     <FormDescription>
                                         Enable two factor authentication
@@ -162,8 +183,8 @@ export default function SettingsCard(session: SettingsProp) {
                                 </FormItem>
                             )}
                         />
-                        <FormError message={error || ''}/>
-                        <FormSuccess message={success || ''}/>
+                        <FormError message={error || ''} />
+                        <FormSuccess message={success || ''} />
                         <Button disabled={status === 'executing' || avatarUploading} type="submit">Update Settings</Button>
                     </form>
                 </Form>

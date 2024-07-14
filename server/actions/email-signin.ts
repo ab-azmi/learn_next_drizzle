@@ -61,12 +61,11 @@ const emailSignIn = action
           await db
             .delete(twoFactorTokens)
             .where(eq(twoFactorTokens.id, twoFactorToken.id));
-
-         
         } else {
+          //if code is not provided, generate new code
           const token = await generateTwoFactorToken(existingUser?.email!);
           if (!token) return { error: "Something went wrong" };
-
+          //send email
           await sendTwoFactorEmail(token[0].email, token[0].token);
           return { twoFactor: "Code verified, new code sent" };
         }
