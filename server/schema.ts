@@ -52,28 +52,24 @@ export const accounts = pgTable(
 export const emailTokens = pgTable(
   "email_tokens",
   {
-    id: text("id").notNull().$defaultFn(() => createId()),
+    id: text("id").primaryKey().$defaultFn(() => createId()),
     token: text("token").notNull(),
     email: text("email").notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
-  (verificationToken) => ({
-    compositePk: primaryKey({
-      columns: [verificationToken.id, verificationToken.token],
-    }),
-  })
 )
 
 export const passwordResetTokens = pgTable('password_reset_tokens', {
-  id: text('id').notNull().$defaultFn(() => createId()),
+  id: text('id').primaryKey().$defaultFn(() => createId()),
   token: text('token').notNull(),
   expires: timestamp('expires', {mode: 'date'}).notNull(),
   email: text('email').notNull()
 })
 
 export const twoFactorTokens = pgTable('two_factor_tokens', {
-  id: text('id').notNull().$defaultFn(() => createId()),
+  id: text('id').primaryKey().$defaultFn(() => createId()),
   token: text('token').notNull(),
   expires: timestamp('expires', {mode: 'date'}).notNull(),
-  email: text('email').notNull()
+  email: text('email').notNull(),
+  userId: text('userId').references(() => users.id, {onDelete: 'cascade'})
 })

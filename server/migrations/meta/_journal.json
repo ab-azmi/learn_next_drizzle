@@ -50,6 +50,34 @@
       "when": 1720521765161,
       "tag": "0006_hesitant_blue_marvel",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1720959744008,
+      "tag": "0007_lush_hammerhead",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1720962750800,
+      "tag": "0008_outstanding_franklin_richards",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1720966199754,
+      "tag": "0009_wise_master_mold",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1720966352970,
+      "tag": "0010_lowly_captain_flint",
+      "breakpoints": true
     }
   ]
 }

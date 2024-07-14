@@ -43,3 +43,20 @@ export const sendPassowrdResetEmail = async (email: string, token: string) => {
     
       return {success: data};
 }
+
+export const sendTwoFactorEmail = async (email: string, token: string) => {
+
+  const { data, error } = await resend.emails.send({
+      from: 'Acme <onboarding@resend.dev>',
+      to: email,
+      subject: 'Sprout and Scribble - 2 Factor Authentication Token',
+      html: '<p>Your 2FA token is: <strong>' + token + '</strong></p>',
+      text: 'Please reset your password by clicking the link below:',
+    });
+  
+    if (error) {
+      return {error: error};
+    }
+  
+    return {success: data};
+}
