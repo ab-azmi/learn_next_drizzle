@@ -5,11 +5,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import Image from "next/image"
 import { LogOut, Moon, Settings, Sun, TruckIcon } from "lucide-react"
-import { signOut } from "@/server/auth"
 import { useTheme } from "next-themes"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import { Switch } from "../ui/switch"
 import { useRouter } from "next/navigation"
+import { signOut } from "next-auth/react"
 
 export const UserButton = ({ user }: Session) => {
     const { setTheme, theme } = useTheme();
@@ -18,7 +18,7 @@ export const UserButton = ({ user }: Session) => {
     const router = useRouter();
 
     return (
-        <DropdownMenu modal={false}>
+        <DropdownMenu>
             <DropdownMenuTrigger>
                 <Avatar>
                     {user?.image && (
@@ -62,7 +62,7 @@ export const UserButton = ({ user }: Session) => {
                             <span className="text-yellow-500 font-medium">Light</span>
                         )}
                         {theme == 'dark' && (
-                            <span className="text-primary font-medium">Light</span>
+                            <span className="text-primary font-medium">Dark</span>
                         )}
                     </DropdownMenuLabel>
                     <Switch className="ml-2" checked={checked} onCheckedChange={(e) => {

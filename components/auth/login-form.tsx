@@ -32,10 +32,10 @@ const LoginForm = () => {
     //action
     const { execute, status } = useAction(emailSignIn, {
         onSuccess: (res) => {
-            if(res?.data?.success){
+            if (res?.data?.success) {
                 setSuccess(res.data.success)
             }
-            if(res?.data?.error){
+            if (res?.data?.error) {
                 setError(res.data.error)
             }
         }
@@ -97,13 +97,11 @@ const LoginForm = () => {
                                 )}>
                             </FormField>
                             {/* Back */}
-                            <Button size={'sm'} variant={'link'} asChild className="w-fit">
-                                <Link href={'/auth/reset'}>Forgot your password?</Link>
-                            </Button>
+                            <Link href={'/auth/reset'}>Forgot your password?</Link>
                             {/* Error */}
-                            {error !== '' && <FormError message={error}/>}
+                            {error !== '' && <FormError message={error} />}
                             {/* Success */}
-                            {success !== '' && <FormSuccess message={success}/>}
+                            {success !== '' && <FormSuccess message={success} />}
                             {/* Submit */}
                             <Button disabled={status === 'executing'}>
                                 {status === 'executing' && (

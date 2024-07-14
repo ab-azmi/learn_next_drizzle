@@ -149,7 +149,11 @@ export default function SettingsCard(session: SettingsProp) {
                                 <FormItem>
                                     <FormLabel>Two Factor Auth</FormLabel>
                                     <FormControl>
-                                        <Switch className="block" disabled={session.session.user.isOAuth}/>
+                                        <Switch
+                                            checked={field.value} 
+                                            onCheckedChange={field.onChange}
+                                            className="block" 
+                                            disabled={session.session.user.isOAuth}/>
                                     </FormControl>
                                     <FormDescription>
                                         Enable two factor authentication
