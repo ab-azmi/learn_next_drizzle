@@ -169,6 +169,9 @@ export default function SettingsCard(session: SettingsProp) {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Two Factor Auth</FormLabel>
+                                    <FormDescription>
+                                        Enable two factor authentication
+                                    </FormDescription>
                                     <FormControl>
                                         <Switch
                                             checked={field.value}
@@ -176,9 +179,6 @@ export default function SettingsCard(session: SettingsProp) {
                                             className="block"
                                             disabled={session.session.user.isOAuth} />
                                     </FormControl>
-                                    <FormDescription>
-                                        Enable two factor authentication
-                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
