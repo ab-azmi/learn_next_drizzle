@@ -6,9 +6,11 @@ import {
   primaryKey,
   integer,
   pgEnum,
+  serial,
+  real,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
-import { createId } from '@paralleldrive/cuid2'
+import { createId } from "@paralleldrive/cuid2";
 
 export const RoleEnum = pgEnum("roles", ["user", "admin"]);
 
@@ -49,27 +51,38 @@ export const accounts = pgTable(
   })
 );
 
-export const emailTokens = pgTable(
-  "email_tokens",
-  {
-    id: text("id").primaryKey().$defaultFn(() => createId()),
-    token: text("token").notNull(),
-    email: text("email").notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-  },
-)
+export const emailTokens = pgTable("email_tokens", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  token: text("token").notNull(),
+  email: text("email").notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
 
-export const passwordResetTokens = pgTable('password_reset_tokens', {
-  id: text('id').primaryKey().$defaultFn(() => createId()),
-  token: text('token').notNull(),
-  expires: timestamp('expires', {mode: 'date'}).notNull(),
-  email: text('email').notNull()
-})
+export const passwordResetTokens = pgTable("password_reset_tokens", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  token: text("token").notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+  email: text("email").notNull(),
+});
 
-export const twoFactorTokens = pgTable('two_factor_tokens', {
-  id: text('id').primaryKey().$defaultFn(() => createId()),
-  token: text('token').notNull(),
-  expires: timestamp('expires', {mode: 'date'}).notNull(),
-  email: text('email').notNull(),
-  userId: text('userId').references(() => users.id, {onDelete: 'cascade'})
-})
+export const twoFactorTokens = pgTable("two_factor_tokens", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  token: text("token").notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+  email: text("email").notNull(),
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
+});
+
+export const products = pgTable("products", {
+  id: serial("id").primaryKey(),
+  description: text("description").notNull(),
+  title: text("title").notNull(),
+  created: timestamp('created').defaultNow(),
+  price: real('price').notNull(),
+});

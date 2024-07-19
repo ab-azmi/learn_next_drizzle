@@ -23,11 +23,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { DollarSign } from "lucide-react";
+import Tiptap from "./tiptap";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 
 export default function ProductForm() {
     const form = useForm<z.infer<typeof ProductSchema>>({
-        defaultValues: ProductSchemaDefaultValues
+        resolver: zodResolver(ProductSchema),
+        defaultValues: ProductSchemaDefaultValues,
     });
 
     const onSubmit = (values: z.infer<typeof ProductSchema>) => {
@@ -42,7 +45,7 @@ export default function ProductForm() {
             </CardHeader>
             <CardContent>
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 max-w-xl">
                         {/* Title */}
                         <FormField
                             control={form.control}
@@ -65,7 +68,7 @@ export default function ProductForm() {
                                 <FormItem>
                                     <FormLabel>Description</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Lol" {...field} />
+                                        <Tiptap val={field.value}/>
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
