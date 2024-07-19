@@ -25,16 +25,38 @@ import { Input } from "@/components/ui/input"
 import { DollarSign } from "lucide-react";
 import Tiptap from "./tiptap";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useAction } from "next-safe-action/hooks";
+import { createProduct } from "@/server/actions/create-product";
+import { useState } from "react";
+import FormError from "@/components/auth/form-error";
+import FormSuccess from "@/components/auth/form-success";
 
 
 export default function ProductForm() {
+    const [error, setError] = useState<string | undefined>(undefined);
+    const [success, setSuccess] = useState<string | undefined>(undefined);
+
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: ProductSchemaDefaultValues,
     });
 
+    const {execute, status} = useAction(createProduct, {
+        onSuccess: (res) => {
+            if(res?.data?.success){
+                setSuccess(res.data.success);
+            }
+            if(res?.data?.error){
+                setError(res.data.error);
+            }
+        },
+        onError: (error) => {
+            console.log(error);
+        }
+    });
+
     const onSubmit = (values: z.infer<typeof ProductSchema>) => {
-        console.log(values);
+        execute(values);
     }
 
     return (
@@ -94,7 +116,11 @@ export default function ProductForm() {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit">Submit</Button>
+                        <FormError message={error} />
+                        <FormSuccess message={success} />
+                        <Button 
+                            disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty} 
+                            type="submit">Submit</Button>
                     </form>
                 </Form>
             </CardContent>
