@@ -30,25 +30,33 @@ import { createProduct } from "@/server/actions/create-product";
 import { useState } from "react";
 import FormError from "@/components/auth/form-error";
 import FormSuccess from "@/components/auth/form-success";
+import { useRouter } from "next/navigation";
+import {toast} from "sonner";
 
 
 export default function ProductForm() {
     const [error, setError] = useState<string | undefined>(undefined);
-    const [success, setSuccess] = useState<string | undefined>(undefined);
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
         defaultValues: ProductSchemaDefaultValues,
+        mode: 'onChange'
     });
 
-    const {execute, status} = useAction(createProduct, {
+    const { execute, status } = useAction(createProduct, {
         onSuccess: (res) => {
-            if(res?.data?.success){
-                setSuccess(res.data.success);
+            if (res?.data?.success) {
+                toast.success(res.data.success);
+                form.reset();
+                router.push('/dashboard/products');
             }
-            if(res?.data?.error){
+            if (res?.data?.error) {
                 setError(res.data.error);
             }
+        },
+        onExecute: () => {
+            toast.loading('Creating Product...');
         },
         onError: (error) => {
             console.log(error);
@@ -60,10 +68,10 @@ export default function ProductForm() {
     }
 
     return (
-        <Card>
+        <Card className="max-w-xl my-3 mx-6">
             <CardHeader>
-                <CardTitle>Card Title</CardTitle>
-                <CardDescription>Card Description</CardDescription>
+                <CardTitle>Add New Product</CardTitle>
+                <CardDescription>Create something wonderful</CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -105,10 +113,10 @@ export default function ProductForm() {
                                     <FormLabel>Product Price</FormLabel>
                                     <FormControl>
                                         <div className="flex items-center">
-                                            <DollarSign size={40} className="p-2 bg-muted rounded-l-md"/>
-                                            <Input 
-                                                type="number" 
-                                                placeholder="Price in USD" 
+                                            <DollarSign size={40} className="p-2 bg-muted rounded-l-md" />
+                                            <Input
+                                                type="number"
+                                                placeholder="Price in USD"
                                                 step={0.1} min={0} {...field} />
                                         </div>
                                     </FormControl>
@@ -117,10 +125,11 @@ export default function ProductForm() {
                             )}
                         />
                         <FormError message={error} />
-                        <FormSuccess message={success} />
-                        <Button 
-                            disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty} 
-                            type="submit">Submit</Button>
+                        <Button
+                            disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty}
+                            type="submit">
+                            Submit
+                        </Button>
                     </form>
                 </Form>
             </CardContent>
