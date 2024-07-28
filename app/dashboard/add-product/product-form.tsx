@@ -29,7 +29,6 @@ import { useAction } from "next-safe-action/hooks";
 import { createProduct } from "@/server/actions/create-product";
 import { useState } from "react";
 import FormError from "@/components/auth/form-error";
-import FormSuccess from "@/components/auth/form-success";
 import { useRouter } from "next/navigation";
 import {toast} from "sonner";
 
