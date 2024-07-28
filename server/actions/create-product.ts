@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import { createSafeActionClient } from "next-safe-action"
 import { products } from "../schema";
 import { db } from "..";
+import { revalidatePath } from "next/cache";
 
 const action = createSafeActionClient();
 
@@ -37,6 +38,7 @@ export const createProduct = action
                     .values({description, price, title})
                     .returning()
 
+                    revalidatePath('/dashboard/products');
                 return {success: `Product ${newProduct[0].title} has been created`}
             }
         } catch (error) {

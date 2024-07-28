@@ -31,6 +31,7 @@ import { useState } from "react";
 import FormError from "@/components/auth/form-error";
 import { useRouter } from "next/navigation";
 import {toast} from "sonner";
+import { revalidatePath } from "next/cache";
 
 
 export default function ProductForm() {
@@ -45,6 +46,8 @@ export default function ProductForm() {
 
     const { execute, status } = useAction(createProduct, {
         onSuccess: (res) => {
+            toast.dismiss();
+            
             if (res?.data?.success) {
                 toast.success(res.data.success);
                 form.reset();
