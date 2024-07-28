@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { deleteProduct } from "@/server/actions/delete-product";
 import { ColumnDef, Row } from "@tanstack/react-table"
-import { Link, MoreHorizontal } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
 import Image from "next/image";
+import Link from "next/link";
 import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
@@ -46,7 +47,9 @@ const ActionCell = ({ row }: { row: Row<ProductColumn> }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem className="dark:focus:bg-primary focus:bg-primary/50 cursor-pointer">
-                    <Link href={`/dashboard/add-product?id=${product.id}`}>Edit Product</Link>
+                    <Link href={`/dashboard/add-product?id=${product.id}`}>
+                        Edit Product
+                    </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => execute({ id: product.id })}

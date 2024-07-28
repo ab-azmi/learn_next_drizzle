@@ -27,16 +27,44 @@ import Tiptap from "./tiptap";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAction } from "next-safe-action/hooks";
 import { createProduct } from "@/server/actions/create-product";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FormError from "@/components/auth/form-error";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {toast} from "sonner";
 import { revalidatePath } from "next/cache";
+import { getProduct } from "@/server/actions/get-product";
 
 
 export default function ProductForm() {
     const [error, setError] = useState<string | undefined>(undefined);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const editMode = searchParams.has('id');
+
+    const checkProduct = async (id: number) => {
+        if(editMode){
+            const data = await getProduct(id);   
+            if(data.error){
+                toast.error(data.error);
+                router.back();
+                return;
+            }
+            if(data.success){
+                const id = parseInt(searchParams.get('id') as string);
+                form.setValue('title', data.success.title);
+                form.setValue('description', data.success.description);
+                form.setValue('price', data.success.price);
+                form.setValue('id', id);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(editMode){
+            const id = parseInt(searchParams.get('id') as string);
+            checkProduct(id);
+        }
+    })
 
     const form = useForm<z.infer<typeof ProductSchema>>({
         resolver: zodResolver(ProductSchema),
@@ -58,7 +86,11 @@ export default function ProductForm() {
             }
         },
         onExecute: () => {
-            toast.loading('Creating Product...');
+            if(editMode){
+                toast.loading('Updating product...');
+            }else{
+                toast.loading('Creating product...');
+            }
         },
         onError: (error) => {
             console.log(error);
@@ -72,8 +104,12 @@ export default function ProductForm() {
     return (
         <Card className="max-w-xl my-3 mx-6">
             <CardHeader>
-                <CardTitle>Add New Product</CardTitle>
-                <CardDescription>Create something wonderful</CardDescription>
+                <CardTitle>
+                    {editMode ? 'Edit Product' : 'Add New Product'}
+                    </CardTitle>
+                <CardDescription>
+                    {editMode ? 'Make changes to existing product' : 'Create something wonderful'}
+                </CardDescription>
             </CardHeader>
             <CardContent>
                 <Form {...form}>
@@ -130,14 +166,11 @@ export default function ProductForm() {
                         <Button
                             disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty}
                             type="submit">
-                            Submit
+                            {editMode ? 'Save Changes' : 'Create Product'}
                         </Button>
                     </form>
                 </Form>
             </CardContent>
-            <CardFooter>
-                <p>Card Footer</p>
-            </CardFooter>
         </Card>
     )
 }
