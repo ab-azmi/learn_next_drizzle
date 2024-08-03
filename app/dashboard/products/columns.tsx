@@ -99,17 +99,14 @@ export const columns: ColumnDef<ProductColumn>[] = [
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
-                                <span className="text-primary">
-                                    <PlusCircle className="h-4 w-4" />
+                                <span>
+                                    <ProductVariant editMode={false}>
+                                        <PlusCircle className="h-5 w-5" />
+                                    </ProductVariant>
                                 </span>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <ProductVariant editMode={false}>
-                                    <div className="flex">
-                                    <PlusCircle className="h-4 w-4" />
-                                    <p>Create a new product variant</p>
-                                    </div>
-                                </ProductVariant>
+                                <p>Create a new product variant</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>

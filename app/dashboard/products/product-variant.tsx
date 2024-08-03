@@ -9,6 +9,7 @@ import { VariantSchema, VariantSchemaDefaultValues } from "@/types/variant-schem
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import InputTags from "./input-tags";
 
 export default function ProductVariant(
     { editMode, productID, variant, children }:
@@ -77,8 +78,11 @@ export default function ProductVariant(
                                 <FormItem>
                                     <FormLabel>Variant Tags</FormLabel>
                                     <FormControl>
-                                        {/* <InputTags> */}
+                                        <InputTags {...field} onChange={(e) => field.onChange(e)}/>
                                     </FormControl>
+                                    <FormDescription>
+                                        Press enter to input tags
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}
