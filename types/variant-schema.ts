@@ -2,7 +2,7 @@ import z from "zod";
 
 export const VariantSchema = z.object({
     productID: z.number(),
-    id: z.number(),
+    id: z.number().optional(),
     editMode: z.boolean(),
     productType: z.string().min(3),
     color: z.string().min(3),
@@ -19,7 +19,7 @@ export const VariantSchema = z.object({
 })
 
 export const VariantSchemaDefaultValues = {
-    productID: 0,
+    productID: undefined,
     id: undefined,
     editMode: false,
     productType: 'Black Notebook',

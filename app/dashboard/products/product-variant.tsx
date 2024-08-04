@@ -11,27 +11,85 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputTags from "./input-tags";
 import VariantImages from "./variant-images";
+import { useAction } from "next-safe-action/hooks";
+import createVariants from "@/server/actions/create-variants";
+import { toast } from "sonner";
+import { forwardRef, useEffect, useState } from "react";
 
-const ProductVariant = (
-    { editMode, productID, variant, children }:
-        {
-            editMode: boolean,
-            productID?: number,
-            variant?: VariantsWithImagesTags,
-            children: React.ReactNode
-        }) => {
+type ProductVariantProps = {
+    editMode: boolean,
+    productID?: number,
+    variant?: VariantsWithImagesTags,
+    children: React.ReactNode
+};
+
+const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
+    { editMode, productID, variant, children }, ref) => {
+
+    const [open, setOpen] = useState(false);
 
     const form = useForm<z.infer<typeof VariantSchema>>({
         resolver: zodResolver(VariantSchema),
-        defaultValues: VariantSchemaDefaultValues,
+        defaultValues: {
+            productID: productID,
+            id: undefined,
+            editMode: false,
+            productType: 'Black Notebook',
+            color: '#000000',
+            tags: [],
+            variantImages: []
+        },
     });
 
-    const onSubmit = (values: z.infer<typeof VariantSchema>) => {
+    const { execute, status } = useAction(createVariants, {
+        onExecute() {
+            toast.loading('Creating variant', { duration: 500 })
+            setOpen(false);
+        },
+        onSuccess(res) {
+            toast.dismiss();
 
+            if (res?.data?.success) {
+                toast.success(res.data.success)
+            }
+            if (res?.data?.error) {
+                toast.error(res.data.error)
+            }
+
+        }
+    })
+
+    const onSubmit = (values: z.infer<typeof VariantSchema>) => {
+        execute(values);
     }
 
+    const setEdit = () => {
+        if (!editMode) {
+            form.reset();
+            return;
+        }
+        if (editMode && variant) {
+            form.setValue('editMode', true);
+            form.setValue('id', variant.id);
+            form.setValue('productID', variant.productID);
+            form.setValue('productType', variant.productType);
+            form.setValue('tags', variant.variantTags.map(tag => tag.tag));
+            form.setValue('variantImages', variant.variantImages.map(img => ({
+                name: img.name,
+                size: img.size,
+                url: img.url
+            })));
+            form.setValue('color', variant.color);
+        }
+    }
+
+    useEffect(() => {
+        setEdit();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger>
                 {children}
             </DialogTrigger>
@@ -79,7 +137,7 @@ const ProductVariant = (
                                 <FormItem>
                                     <FormLabel>Variant Tags</FormLabel>
                                     <FormControl>
-                                        <InputTags {...field} onChange={(e) => field.onChange(e)}/>
+                                        <InputTags {...field} onChange={(e) => field.onChange(e)} />
                                     </FormControl>
                                     <FormDescription>
                                         Press enter to input tags
@@ -88,20 +146,25 @@ const ProductVariant = (
                                 </FormItem>
                             )}
                         />
-                        <VariantImages/>
-                        {editMode && variant && (
-                            <Button
-                                onClick={(e) => e.preventDefault()}
-                                type="button">Delete Variant</Button>
-                        )}
-                        <Button type="submit">
-                            {editMode ? 'Update Variant' : 'Add Variant'}
-                        </Button>
+                        <VariantImages />
+                        <div className="flex gap-3">
+                            {editMode && variant && (
+                                <Button
+                                    variant={'destructive'}
+                                    onClick={(e) => e.preventDefault()}
+                                    type="button">Delete Variant</Button>
+                            )}
+                            <Button type="submit">
+                                {editMode ? 'Update Variant' : 'Add Variant'}
+                            </Button>
+                        </div>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
     )
-}
+})
+
+ProductVariant.displayName = 'ProductVariant';
 
 export default ProductVariant;
