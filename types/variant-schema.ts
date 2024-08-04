@@ -12,8 +12,8 @@ export const VariantSchema = z.object({
             message: 'Please wait for image to upload'
         }),
         size: z.number(),
-        key: z.string(),
-        id: z.number(),
+        key: z.string().optional(),
+        id: z.number().optional(),
         name: z.string(),
     }))
 })

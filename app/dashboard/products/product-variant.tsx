@@ -10,15 +10,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import InputTags from "./input-tags";
+import VariantImages from "./variant-images";
 
-export default function ProductVariant(
+const ProductVariant = (
     { editMode, productID, variant, children }:
         {
             editMode: boolean,
             productID?: number,
             variant?: VariantsWithImagesTags,
             children: React.ReactNode
-        }) {
+        }) => {
 
     const form = useForm<z.infer<typeof VariantSchema>>({
         resolver: zodResolver(VariantSchema),
@@ -34,7 +35,7 @@ export default function ProductVariant(
             <DialogTrigger>
                 {children}
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="lg:max-w-screen-lg overflow-y-scroll max-h-[640px] rounded-md">
                 <DialogHeader>
                     <DialogTitle>
                         {editMode ? 'Edit Variant' : 'Add Variant'}
@@ -87,7 +88,7 @@ export default function ProductVariant(
                                 </FormItem>
                             )}
                         />
-                        {/* <VariantImages/> */}
+                        <VariantImages/>
                         {editMode && variant && (
                             <Button
                                 onClick={(e) => e.preventDefault()}
@@ -102,3 +103,5 @@ export default function ProductVariant(
         </Dialog>
     )
 }
+
+export default ProductVariant;
