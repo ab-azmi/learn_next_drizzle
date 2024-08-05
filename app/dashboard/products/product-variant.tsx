@@ -15,6 +15,7 @@ import { useAction } from "next-safe-action/hooks";
 import createVariants from "@/server/actions/create-variants";
 import { toast } from "sonner";
 import { forwardRef, useEffect, useState } from "react";
+import { deleteVariant } from "@/server/actions/delete-variant";
 
 type ProductVariantProps = {
     editMode: boolean,
@@ -44,6 +45,23 @@ const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
     const { execute, status } = useAction(createVariants, {
         onExecute() {
             toast.loading('Creating variant', { duration: 500 })
+            setOpen(false);
+        },
+        onSuccess(res) {
+            toast.dismiss();
+
+            if (res?.data?.success) {
+                toast.success(res.data.success)
+            }
+            if (res?.data?.error) {
+                toast.error(res.data.error)
+            }
+
+        }
+    })
+    const variantAction = useAction(deleteVariant, {
+        onExecute() {
+            toast.loading('Deleting variant', { duration: 500 })
             setOpen(false);
         },
         onSuccess(res) {
@@ -151,7 +169,10 @@ const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
                             {editMode && variant && (
                                 <Button
                                     variant={'destructive'}
-                                    onClick={(e) => e.preventDefault()}
+                                    onClick={(e) => {
+                                        e.preventDefault()
+                                        variantAction.execute({id: variant.id})
+                                    }}
                                     type="button">Delete Variant</Button>
                             )}
                             <Button type="submit">
