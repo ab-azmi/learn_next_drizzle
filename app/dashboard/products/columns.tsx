@@ -131,11 +131,13 @@ export const columns: ColumnDef<ProductColumn>[] = [
         accessorKey: "image",
         header: "Image",
         cell: ({ row }) => {
-            const image = row.getValue("image") as string;
+            const variants = row.getValue("variants") as VariantsWithImagesTags[];
+            const variantImage = variants[0]?.variantImages[0]?.url;
+            const placeholderImage = row.getValue("image") as string;
             const title = row.getValue("title") as string;
             return (
                 <div>
-                    <Image src={image} width={50} height={50} alt={title} className="rounded-md" />
+                    <Image src={variantImage || placeholderImage} width={50} height={50} alt={title} className="rounded-md" />
                 </div>
             );
         }
