@@ -68,12 +68,12 @@ const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
             toast.dismiss();
 
             if (res?.data?.success) {
+                form.reset();
                 toast.success(res.data.success)
             }
             if (res?.data?.error) {
                 toast.error(res.data.error)
             }
-
         }
     })
 

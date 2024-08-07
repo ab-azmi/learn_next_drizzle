@@ -16,7 +16,7 @@ export default function Products({variants}: ProductTypes){
             {variants.map((variant) => (
                 <Link 
                     key={variant.id} 
-                    href={`/products/${variant.id}?id=${variant.id}&productID=${variant.productID}&price=${variant.product.price}&title=${variant.product.title}&type=${variant.productType}&image=${variant.variantImages[0].url}`}>
+                    href={`/products/${variant.id}?id=${variant.id}&productID=${variant.productID}&price=${variant.product.price}&title=${variant.product.title}&type=${variant.productType}&image=${variant.variantImages[0].url}&color=${variant.color}`}>
                         <Image src={variant.variantImages[0].url} className="rounded-md pb-2" alt={variant.productType} width={720} height={480} loading="lazy"/>
 
                         <div className="flex justify-between">
