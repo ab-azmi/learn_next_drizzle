@@ -43,7 +43,10 @@ const InputTags = forwardRef<HTMLInputElement, InputTagsProps>(({ onChange, valu
                                 {tag}
 
                                 {/* Delete tag */}
-                                <button onClick={() => onChange(value.filter((i) => i !== tag))}>
+                                <button onClick={(e) => {
+                                    e.preventDefault();
+                                    return onChange(value.filter((i) => i !== tag))
+                                }}>
                                     <XIcon className="w-3" />
                                 </button>
                             </Badge>

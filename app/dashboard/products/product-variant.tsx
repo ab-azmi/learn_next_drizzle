@@ -168,6 +168,7 @@ const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
                         <div className="flex gap-3">
                             {editMode && variant && (
                                 <Button
+                                    disabled={variantAction.status === 'executing'}
                                     variant={'destructive'}
                                     onClick={(e) => {
                                         e.preventDefault()
@@ -175,7 +176,7 @@ const ProductVariant = forwardRef<HTMLDivElement, ProductVariantProps>((
                                     }}
                                     type="button">Delete Variant</Button>
                             )}
-                            <Button type="submit">
+                            <Button type="submit" disabled={status === 'executing' || !form.formState.isValid || !form.formState.isDirty}>
                                 {editMode ? 'Update Variant' : 'Add Variant'}
                             </Button>
                         </div>

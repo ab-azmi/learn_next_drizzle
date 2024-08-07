@@ -2,13 +2,20 @@
 
 import { VariantSchema } from "@/types/variant-schema";
 import { createSafeActionClient } from "next-safe-action";
-import { productVariants, variantImages, variantTags } from "../schema";
+import { products, productVariants, variantImages, variantTags } from "../schema";
 import { db } from "..";
 import { eq } from "drizzle-orm";
 import { variantImagesType, VariantTagsType } from "@/lib/infer-types";
 import { revalidatePath } from "next/cache";
+import algoliaSearch from 'algoliasearch'
 
 const action = createSafeActionClient();
+
+const algoliaClient = algoliaSearch(
+    process.env.ALGOLIA_APP_ID!, 
+    process.env.ALGOLIA_WRITE_KEY!)
+
+const algoliaIndex = algoliaClient.initIndex('products')
 
 const createVariants = action
   .schema(VariantSchema)
@@ -62,6 +69,14 @@ const createVariants = action
               order: index,
             }))
           );
+
+          algoliaIndex.partialUpdateObject({
+            objectID: editVariant[0].id.toString(),
+            id: editVariant[0].productID,
+            productType: editVariant[0].productType,
+            variantImages: newImages[0].url
+          })
+
           revalidatePath("/dashboard/products");
           return { success: `Edited ${productType}` };
         }
@@ -76,6 +91,11 @@ const createVariants = action
             })
             .returning();
 
+          // get the product
+          const product = await db.query.products.findFirst({
+            where: eq(products.id, productID)
+          })
+
           await db.insert(variantTags).values(
             tags.map((tag: VariantTagsType) => ({
               tag,
@@ -83,7 +103,7 @@ const createVariants = action
             }))
           );
 
-          await db.insert(variantImages).values(
+          const newImg = await db.insert(variantImages).values(
             newImages.map((img: variantImagesType, index: number) => ({
               name: img.name,
               size: img.size,
@@ -92,6 +112,17 @@ const createVariants = action
               order: index,
             }))
           );
+
+          if(product){
+            algoliaIndex.saveObject({
+              objectID: newVariant[0].id.toString(),
+              id: newVariant[0].productID,
+              title: product.title,
+              price: product.price,
+              productType: newVariant[0].productType,
+              variantImages: newImages[0].url
+            })
+          }
 
           revalidatePath("/dashboard/products");
           return { success: `Edited ${productType}` };
