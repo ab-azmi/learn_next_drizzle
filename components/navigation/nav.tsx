@@ -9,7 +9,7 @@ export default async function Nav() {
     const session = await auth();
 
     return (
-        <header className="px-14 py-8">
+        <header className="py-8">
             <nav>
                 <ul className="flex justify-between">
                     <li>
