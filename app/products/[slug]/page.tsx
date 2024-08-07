@@ -1,4 +1,5 @@
 import ProductPick from "@/components/products/product-pick";
+import ProductShowcase from "@/components/products/product-showcase";
 import ProductType from "@/components/products/product-type";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/format-price";
@@ -50,22 +51,22 @@ export default async function Page({params}: {params: {slug: string}}) {
 
     return (
         <main>
-            <section>
+            <section className="flex flex-col lg:flex-row gap-4 lg:gap-12">
                 <div className="flex-1">
-                    <h1>Images</h1>
+                    <ProductShowcase variants={variant.product.productVariants}/>
                 </div>
                 <div className="flex gap-2 flex-col flex-1">
-                    <h1>{variant?.product.title}</h1>
+                    <h1 className="text-2xl font-bold">{variant?.product.title}</h1>
                     <div>
                         <ProductType variants={variant.product.productVariants}/>
                     </div>
-                    <Separator/>
-                    <p className="text-2xl font-medium">
+                    <Separator className="my-2"/>
+                    <p className="text-2xl font-medium py-2">
                         {formatPrice(variant.product.price)}
                     </p>
                     <div dangerouslySetInnerHTML={{ __html: variant.product.description }}>
                     </div>
-                    <p className="text-secondary-foreground">
+                    <p className="text-secondary-foreground font-medium my-2">
                         Availabel Colors
                     </p>
                     <div className="flex gap-4">
