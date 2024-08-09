@@ -21,7 +21,7 @@ export default function Review({ reviews }: { reviews: ReviewWithUser[] }) {
                         <div>
                             <p className="text-sm font-bold">{review.user.name}</p>
                             <div className="flex items-center gap-2">
-                                <Stars rating={review.rating} totalReviews={reviews.length} />
+                                <Stars rating={review.rating} />
                                 <p className="text-xs font-bold text-muted-foreground">
                                     {formatDistance(subDays(review.created!, 0), new Date())}
                                 </p>
