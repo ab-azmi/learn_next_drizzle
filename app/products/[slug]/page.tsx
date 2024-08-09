@@ -1,3 +1,4 @@
+import AddCart from "@/components/cart/add-cart";
 import ProductPick from "@/components/products/product-pick";
 import ProductShowcase from "@/components/products/product-showcase";
 import ProductType from "@/components/products/product-type";
@@ -92,6 +93,7 @@ export default async function Page({ params }: { params: { slug: string } }) {
                                 image={vari.variantImages[0].url} />
                         ))}
                     </div>
+                    <AddCart/>
                 </div>
             </section>
             <Reviews productID={variant.product.id} />
