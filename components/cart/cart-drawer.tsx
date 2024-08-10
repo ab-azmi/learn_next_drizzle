@@ -4,6 +4,7 @@ import { useCartStore } from "@/lib/client-store"
 import { ShoppingCart } from "lucide-react";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "../ui/drawer";
 import { AnimatePresence, motion } from "framer-motion";
+import CartItems from "./cart-items";
 
 export default function CartDrawer() {
     const { cart } = useCartStore();
@@ -28,9 +29,12 @@ export default function CartDrawer() {
                     </div>
                 </DrawerTrigger>
                 <DrawerContent>
-                    <DrawerHeader>
-                        <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-                        <DrawerDescription>This action cannot be undone.</DrawerDescription>
+                    <DrawerHeader className="flex flex-col justify-center items-center">
+                        <DrawerTitle>Cart Items</DrawerTitle>
+                        <DrawerDescription>
+                            Items in your cart
+                        </DrawerDescription>
+                        <CartItems />
                     </DrawerHeader>
                 </DrawerContent>
             </Drawer>
