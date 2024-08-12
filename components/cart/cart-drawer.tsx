@@ -28,14 +28,13 @@ export default function CartDrawer() {
                         <ShoppingCart />
                     </div>
                 </DrawerTrigger>
-                <DrawerContent>
+                <DrawerContent className="min-h-50vh">
                     <DrawerHeader className="flex flex-col justify-center items-center">
-                        <DrawerTitle>Cart Items</DrawerTitle>
-                        <DrawerDescription>
-                            Items in your cart
-                        </DrawerDescription>
-                        <CartItems />
+                        <DrawerTitle>Progress</DrawerTitle>
                     </DrawerHeader>
+                    <div className="overflow-auto p-4">
+                        <CartItems />
+                    </div>
                 </DrawerContent>
             </Drawer>
         </div>

@@ -29,7 +29,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange>
-          <div className="flex-grow px-6 md:px-8 mx-auto max-w-6xl">
+          <div className="flex-grow px-6 md:px-8 mx-auto max-w-8xl">
             <Nav />
             {children}
             <Toaster />
