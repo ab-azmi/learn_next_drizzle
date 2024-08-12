@@ -5,9 +5,10 @@ import { ShoppingCart } from "lucide-react";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "../ui/drawer";
 import { AnimatePresence, motion } from "framer-motion";
 import CartItems from "./cart-items";
+import CartMessage from "./cart-message";
 
 export default function CartDrawer() {
-    const { cart } = useCartStore();
+    const { cart, checkoutProgress } = useCartStore();
 
     return (
         <div>
@@ -30,10 +31,10 @@ export default function CartDrawer() {
                 </DrawerTrigger>
                 <DrawerContent className="min-h-50vh">
                     <DrawerHeader className="flex flex-col justify-center items-center">
-                        <DrawerTitle>Progress</DrawerTitle>
+                        <CartMessage/>
                     </DrawerHeader>
                     <div className="overflow-auto p-4">
-                        <CartItems />
+                        {checkoutProgress === "cart-page" && <CartItems />}
                     </div>
                 </DrawerContent>
             </Drawer>
