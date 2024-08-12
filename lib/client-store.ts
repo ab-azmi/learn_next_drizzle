@@ -30,13 +30,13 @@ export const useCartStore = create<CartState>()(
     (set) => ({
         cart: [],
         cartOpen: false,
-        checkoutProgress: "confirmation-page",
+        checkoutProgress: "cart-page",
         setCartOpen: (open) => set({ cartOpen: open }),
         setCheckoutProgress: (progress) => set({ checkoutProgress: progress }),
         addToCart: (item) => 
             set((state) => {
                 // Check if the item is already in the cart
-            const existingItem = state.cart.find((cartItem) => cartItem.id === item.id && cartItem.variant.variantID === item.variant.variantID);
+            const existingItem = state.cart.find((cartItem) => cartItem.variant.variantID === item.variant.variantID);
             if (existingItem) {
                 // If the item is already in the cart, increase the quantity
                 existingItem.variant.quantity += item.variant.quantity;
@@ -47,13 +47,14 @@ export const useCartStore = create<CartState>()(
         }),
         removeFromCart: (item) =>
             set((state) => {
-                const existingItem = state.cart.find((cartItem) => cartItem.id === item.id && cartItem.variant.variantID === item.variant.variantID);
+                const existingItem = state.cart.find((cartItem) => cartItem.variant.variantID === item.variant.variantID);
                 if (existingItem) {
+                    console.log(existingItem)
                     if (existingItem.variant.quantity > 1) {
                         existingItem.variant.quantity -= 1;
                         return { cart: [...state.cart] };
                     }
-                    return { cart: state.cart.filter((cartItem) => cartItem.id !== item.id && cartItem.variant.variantID !== item.variant.variantID) };
+                    return { cart: state.cart.filter((cartItem) => cartItem.variant.variantID !== item.variant.variantID) };
                 }
                 return { cart: state.cart };
             }),

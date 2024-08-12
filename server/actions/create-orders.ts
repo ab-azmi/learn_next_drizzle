@@ -11,7 +11,6 @@ const action = createSafeActionClient();
 export const createOrder = action
     .schema(orderSchema)
     .action(async ({parsedInput: {products, status, total}}) => {
-        console.log(products)
         const user = await auth();
         if(!user) return {error: 'user not found'};
 

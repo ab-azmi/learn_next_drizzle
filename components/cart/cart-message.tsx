@@ -7,7 +7,6 @@ import { ArrowLeft } from "lucide-react";
 
 export default function CartMessage(){
     const {checkoutProgress, setCheckoutProgress} = useCartStore()
-    console.log(checkoutProgress)
     return (
         <motion.div className="flex flex-col items-center"
             animate={{ opacity:1, x:0 }}

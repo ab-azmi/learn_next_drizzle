@@ -13,8 +13,6 @@ export default async function Products(){
         orderBy: (products, {desc}) => [desc(products.id)],
     });
 
-    console.log(products)
-
     if(!products) throw new Error('No products found');
 
     const dataTable = products.map<ProductColumn>(product => {
