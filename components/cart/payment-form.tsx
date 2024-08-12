@@ -14,7 +14,7 @@ export default function PaymentForm(
 ) {
     const stripe = useStripe();
     const elements = useElements();
-    const { cart, setCheckoutProgress } = useCartStore();
+    const { cart, setCheckoutProgress, clearCart } = useCartStore();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -30,6 +30,8 @@ export default function PaymentForm(
                 setIsLoading(false);
                 //redirect to confirmation page
                 setCheckoutProgress('confirmation-page');
+                //clear cart
+                clearCart();
             }
         }
     });
