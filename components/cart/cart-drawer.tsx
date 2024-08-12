@@ -9,7 +9,7 @@ import CartMessage from "./cart-message";
 import Payment from "./payment";
 
 export default function CartDrawer() {
-    const { cart, checkoutProgress } = useCartStore();
+    const { cart, checkoutProgress, setCheckoutProgress } = useCartStore();
 
     return (
         <div>
@@ -37,6 +37,9 @@ export default function CartDrawer() {
                     <div className="overflow-auto p-4">
                         {checkoutProgress === "cart-page" && <CartItems />}
                         {checkoutProgress === "payment-page" && <Payment />}
+                        {checkoutProgress === "confirmation-page" && (
+                            <div onClick={() => setCheckoutProgress('cart-page')}>Confirmantion page</div>
+                        )}
                     </div>
                 </DrawerContent>
             </Drawer>

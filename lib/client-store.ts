@@ -30,11 +30,14 @@ export const useCartStore = create<CartState>()(
         setCheckoutProgress: (progress) => set({ checkoutProgress: progress }),
         addToCart: (item) => 
             set((state) => {
+                // Check if the item is already in the cart
             const existingItem = state.cart.find((cartItem) => cartItem.id === item.id && cartItem.variant.variantID === item.variant.variantID);
             if (existingItem) {
+                // If the item is already in the cart, increase the quantity
                 existingItem.variant.quantity += item.variant.quantity;
                 return { cart: [...state.cart] };
             }
+            // If the item is not in the cart, add it
             return { cart: [...state.cart, item] };
         }),
         removeFromCart: (item) =>

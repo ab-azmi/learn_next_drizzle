@@ -5,30 +5,51 @@ import { AddressElement, PaymentElement, useElements, useStripe } from "@stripe/
 import { Button } from "../ui/button";
 import { useState } from "react";
 import { createPaymentIntent } from "@/server/actions/create-payment-intent";
+import { useAction } from "next-safe-action/hooks";
+import { createOrder } from "@/server/actions/create-orders";
+import { toast } from "sonner";
 
 export default function PaymentForm(
-    {totalPrice}: {totalPrice: number}
-){
+    { totalPrice }: { totalPrice: number }
+) {
     const stripe = useStripe();
     const elements = useElements();
-    const {cart} = useCartStore();
+    const { cart, setCheckoutProgress } = useCartStore();
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
+
+    const { execute } = useAction(createOrder, {
+        onSuccess: (res) => {
+            if (res?.data?.error) {
+                toast.error(res.data.error);
+                setIsLoading(false);
+                return;
+            }
+            if (res?.data?.success) {
+                toast.success(res.data.success);
+                setIsLoading(false);
+                //redirect to confirmation page
+                setCheckoutProgress('confirmation-page');
+            }
+        }
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsLoading(true);
-        if(!stripe || !elements){
+        //check if stripe and elements are loaded
+        if (!stripe || !elements) {
             setIsLoading(false);
             return;
         }
-        const {error: submitError} = await elements.submit();
-        if(submitError){
+        //check if stripe is ready
+        const { error: submitError } = await elements.submit();
+        if (submitError) {
             setErrorMessage(submitError.message!);
             setIsLoading(false);
             return;
         }
-        
+
         //payment intent
         const res = await createPaymentIntent({
             amount: totalPrice,
@@ -41,15 +62,16 @@ export default function PaymentForm(
                 image: item.image
             }))
         })
-        
-        if(res?.data?.error){
+
+        if (res?.data?.error) {
             setErrorMessage(res.data.error);
             setIsLoading(false);
             return;
         }
-        
-        if(res?.data?.success){
-            const {error} = await stripe.confirmPayment({
+        //if payment intent is successful
+        if (res?.data?.success) {
+            //confirm payment
+            const { error } = await stripe.confirmPayment({
                 elements,
                 clientSecret: res.data.success.clientSecretID!,
                 redirect: "if_required",
@@ -59,23 +81,36 @@ export default function PaymentForm(
                 }
             })
 
-            if(error){
+            if (error) {
                 setErrorMessage(error.message!);
                 setIsLoading(false);
                 return;
-            }else{
+            } else {
+                //if confirm payment is successful
+                //create order in DB
                 setIsLoading(false);
-                console.log('success payment')
+                execute({
+                    status: 'pending',
+                    total: totalPrice/100,
+                    products: cart.map(item => ({
+                        productID: item.id,
+                        variantID: item.variant.variantID,
+                        quantity: item.variant.quantity
+                    }))
+                })
             }
         }
     }
 
     return (
         <form onSubmit={handleSubmit}>
-            <PaymentElement/>
-            <AddressElement options={{ mode: 'shipping' }}/>
-            <Button type="submit" disabled={!stripe || !elements}>
-                <span>Pay now</span>
+            <PaymentElement />
+            <AddressElement options={{ mode: 'shipping' }} />
+            <Button
+                type="submit"
+                className=" my-4 w-full"
+                disabled={!stripe || !elements || isLoading}>
+                {isLoading ? 'Processing...' : 'Pay'}
             </Button>
         </form>
     )
