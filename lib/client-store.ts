@@ -49,7 +49,6 @@ export const useCartStore = create<CartState>()(
             set((state) => {
                 const existingItem = state.cart.find((cartItem) => cartItem.variant.variantID === item.variant.variantID);
                 if (existingItem) {
-                    console.log(existingItem)
                     if (existingItem.variant.quantity > 1) {
                         existingItem.variant.quantity -= 1;
                         return { cart: [...state.cart] };

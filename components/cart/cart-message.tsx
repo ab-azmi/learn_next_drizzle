@@ -26,7 +26,7 @@ export default function CartMessage(){
                             Back to cart
                         </span>
                     )}
-                    {checkoutProgress === "confirmation-page" && "Confirm your order"}
+                    {checkoutProgress === "confirmation-page" && "You will reveive an email with your receipt"}
                 </DrawerDescription>
         </motion.div>
     )

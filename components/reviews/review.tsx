@@ -10,6 +10,11 @@ export default function Review({ reviews }: { reviews: ReviewWithUser[] }) {
     return (
         <motion.div
             className="flex flex-col gap-4">
+            {reviews.length === 0 && (
+                <p className="text-center font-medium text-muted-foreground my-2">
+                    No reviews yet
+                </p>
+            )}
             {reviews.map(review => (
                 <Card key={review.id} className="p-4">
                     <div className="flex gap-2 items-center">

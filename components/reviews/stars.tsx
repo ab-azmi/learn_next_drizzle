@@ -14,9 +14,9 @@ export default function Stars({rating, totalReviews, size = 14}: {
                 <Star key={star} size={size}
                     className={cn('text-primary bg-transparent transition-all duration-300 ease-in-out', star <= rating ? "fill-primary text-primary" : "fill-muted text-muted")} />
             ))}
-            {totalReviews && (
+            {totalReviews ? (
                 <span>{totalReviews} reviews</span>
-            )}
+            ) : null}
         </div>
     )
 }
