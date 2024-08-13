@@ -39,3 +39,11 @@ export type VariantTagsType = InferResultType<'variantTags', {productVariants: t
 export type variantImagesType = InferResultType<'variantImages', {productVariants: true}>
 
 export type ReviewWithUser = InferResultType<'reviews', {user: true}>
+
+export type TotalOrders = InferResultType<'orderProduct', {
+    order: {with: {user: true}},
+    product: true,
+    productVariant: {
+        with: {variantImages:true}
+    }
+}>

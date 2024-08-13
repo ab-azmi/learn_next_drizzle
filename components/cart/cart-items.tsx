@@ -20,8 +20,8 @@ export default function CartItems() {
 
     const priceLetters = useMemo(() => {
         return [...totalPrice.toFixed(2).toString()].map(letter => {
-            return {letter, id: createId()}
-        })    
+            return { letter, id: createId() }
+        })
     }, [totalPrice])
 
     return (
@@ -29,10 +29,10 @@ export default function CartItems() {
             {cart.length === 0 && (
                 <div className="my-1 flex-col w-full justify-center flex items-center">
                     <motion.div
-                        animate={{ opacity:1 }}
-                        initial={{ opacity:0 }}
-                        transition={{ delay:0.3 }}>
-                        <h2 className="text-2xl text-muted-foreground">
+                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0 }}
+                        transition={{ delay: 0.3 }}>
+                        <h2 className="text-2xl text-muted-foreground text-center">
                             Cart is Empty
                         </h2>
                         <Lottie animationData={emptyCart} className="h-64" />
@@ -95,28 +95,32 @@ export default function CartItems() {
                     </Table>
                 </div>
             )}
-            <motion.div className="flex my-4 items-center justify-center overflow-hidden relative">
-                <span className="text-md">Total: $</span>
-                <AnimatePresence mode="popLayout">
-                    {priceLetters.map((letter, i) => (
-                        <motion.div key={letter.id}>
-                            <motion.span
-                                initial={{ y:20 }}
-                                animate={{ y:0 }}
-                                exit={{ y:-20 }}
-                                transition={{ delay: i * 0.1 }}
-                                className="text-md inline-block">
-                                {letter.letter}
-                            </motion.span>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
-            </motion.div>
-            <Button 
-                onClick={() => setCheckoutProgress("payment-page")}
-                disabled={cart.length === 0} className="max-w-md w-full">
-                Checkout
-            </Button>
+            {cart.length > 0 && (
+                <motion.div className="flex my-4 items-center justify-center overflow-hidden relative">
+                    <span className="text-md">Total: $</span>
+                    <AnimatePresence mode="popLayout">
+                        {priceLetters.map((letter, i) => (
+                            <motion.div key={letter.id}>
+                                <motion.span
+                                    initial={{ y: 20 }}
+                                    animate={{ y: 0 }}
+                                    exit={{ y: -20 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className="text-md inline-block">
+                                    {letter.letter}
+                                </motion.span>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </motion.div>
+            )}
+            {cart.length > 0 && (
+                <Button
+                    onClick={() => setCheckoutProgress("payment-page")}
+                    disabled={cart.length === 0} className="max-w-md w-full">
+                    Checkout
+                </Button>
+            )}
         </motion.div>
     )
 }

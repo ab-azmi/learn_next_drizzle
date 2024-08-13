@@ -7,10 +7,12 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { db } from "@/server";
 import { auth } from "@/server/auth";
 import { orders } from "@/server/schema";
+import { DialogDescription } from "@radix-ui/react-dialog";
 import { formatDistance, subMinutes } from "date-fns";
 import { eq } from "drizzle-orm";
 import { MoreHorizontal, Tangent } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -58,7 +60,7 @@ export default async function Page() {
                                 <TableCell>{order.id}</TableCell>
                                 <TableCell>${order.total}</TableCell>
                                 <TableCell>
-                                    <Badge className={order.status === 'succeeded' ? 'bg-green-700' : 'bg-primary'}>{order.status}</Badge>
+                                    <Badge className={order.status === 'succeeded' ? 'bg-green-700' : 'bg-yellow-700'}>{order.status}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     {formatDistance(subMinutes(order.created!, 0), new Date(), {
@@ -81,11 +83,23 @@ export default async function Page() {
                                                         </Button>
                                                     </DialogTrigger>
                                                 </DropdownMenuItem>
+                                                {order.receiptURL ? (
+                                                <DropdownMenuItem>
+                                                    <Button asChild className="w-full" variant={'ghost'}>
+                                                        <Link href={order.receiptURL!} target="__blank">
+                                                            Downdload Receipt
+                                                        </Link>
+                                                    </Button>
+                                                </DropdownMenuItem>
+                                                ) : null}
                                             </DropdownMenuContent>
                                         </DropdownMenu>
-                                        <DialogContent>
+                                        <DialogContent className="rounded-md">
                                             <DialogHeader>
                                                 <DialogTitle>Order Details #{order.id}</DialogTitle>
+                                                <DialogDescription>
+                                                    Total is ${order.total}
+                                                </DialogDescription>
                                             </DialogHeader>
                                             <Card className="overflow-auto p-2 flex flex-col gap-4">
                                                 <Table>
