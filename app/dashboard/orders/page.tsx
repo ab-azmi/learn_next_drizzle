@@ -58,7 +58,7 @@ export default async function Page() {
                                 <TableCell>{order.id}</TableCell>
                                 <TableCell>${order.total}</TableCell>
                                 <TableCell>
-                                    <Badge className={order.status === 'succeeded' ? 'bg-greeen-700' : 'bg-primary'}>{order.status}</Badge>
+                                    <Badge className={order.status === 'succeeded' ? 'bg-green-700' : 'bg-primary'}>{order.status}</Badge>
                                 </TableCell>
                                 <TableCell>
                                     {formatDistance(subMinutes(order.created!, 0), new Date(), {
