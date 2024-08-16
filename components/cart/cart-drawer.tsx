@@ -9,6 +9,7 @@ import CartMessage from "./cart-message";
 import Payment from "./payment";
 import OrderConfirmation from "./order-confirmation";
 import CartProgress from "./cart-progress";
+import XenditPayment from "./xendit-payment/payment";
 
 export default function CartDrawer() {
     const { cart, checkoutProgress, setCheckoutProgress, cartOpen, setCartOpen } = useCartStore();
@@ -39,7 +40,7 @@ export default function CartDrawer() {
                     <CartProgress/>
                     <div className="overflow-auto p-4">
                         {checkoutProgress === "cart-page" && <CartItems />}
-                        {checkoutProgress === "payment-page" && <Payment />}
+                        {checkoutProgress === "payment-page" && <XenditPayment />}
                         {checkoutProgress === "confirmation-page" && <OrderConfirmation/>}
                     </div>
                 </DrawerContent>
