@@ -1,7 +1,7 @@
 'use client'
 
 import { useCartStore } from "@/lib/client-store"
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { formatPrice } from "@/lib/format-price";
 import Image from "next/image";
@@ -11,18 +11,48 @@ import Lottie from 'lottie-react'
 import emptyCart from '@/public/empty-box.json'
 import { createId } from '@paralleldrive/cuid2'
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
+import { createXenditInvoice } from "@/server/actions/xendit/invoice";
 
 export default function CartItems() {
-    const { cart, addToCart, removeFromCart, setCheckoutProgress } = useCartStore();
+    const { cart, addToCart, removeFromCart, setCheckoutProgress, clearCart } = useCartStore();
     const totalPrice = useMemo(() => {
         return cart.reduce((acc, item) => acc + item.price! * item.variant.quantity, 0)
     }, [cart])
 
+
     const priceLetters = useMemo(() => {
-        return [...totalPrice.toFixed(2).toString()].map(letter => {
+        return [...formatPrice(totalPrice)].map(letter => {
             return { letter, id: createId() }
         })
     }, [totalPrice])
+
+    const router = useRouter();
+    const [paymentMethod, setPaymentMethod] = useState('')
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        await createXenditInvoice({
+            amount: totalPrice,
+            currency: 'IDR',
+            cart: cart.map(item => ({
+                quantity: item.variant.quantity,
+                productID: item.id,
+                title: item.name,
+                price: item.price,
+                image: item.image
+            }))
+        })
+            .then((res) => {
+                if (res?.data?.success) {
+                    // clearCart()
+                    // setCheckoutProgress('confirmation-page')
+                    router.push(res.data.success.invoiceUrl)
+                    return
+                }
+            })
+
+    }
 
     return (
         <motion.div className="w-full flex flex-col items-center">
@@ -97,7 +127,7 @@ export default function CartItems() {
             )}
             {cart.length > 0 && (
                 <motion.div className="flex my-4 items-center justify-center overflow-hidden relative">
-                    <span className="text-md">Total: $</span>
+                    <span className="text-md">Total: </span>
                     <AnimatePresence mode="popLayout">
                         {priceLetters.map((letter, i) => (
                             <motion.div key={letter.id}>
@@ -114,13 +144,15 @@ export default function CartItems() {
                     </AnimatePresence>
                 </motion.div>
             )}
-            {cart.length > 0 && (
-                <Button
-                    onClick={() => setCheckoutProgress("payment-page")}
-                    disabled={cart.length === 0} className="max-w-md w-full">
-                    Checkout
-                </Button>
-            )}
+            <form onSubmit={handleSubmit}>
+                {cart.length > 0 && (
+                    <Button
+                        type="submit"
+                        disabled={cart.length === 0} className="max-w-md w-full">
+                        Choose Payment Method
+                    </Button>
+                )}
+            </form>
         </motion.div>
     )
 }

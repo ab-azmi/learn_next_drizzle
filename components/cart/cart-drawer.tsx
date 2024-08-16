@@ -13,6 +13,7 @@ import XenditPayment from "./xendit-payment/payment";
 
 export default function CartDrawer() {
     const { cart, checkoutProgress, setCheckoutProgress, cartOpen, setCartOpen } = useCartStore();
+    const totalPrice = cart.reduce((acc, item) => acc + item.price * item.variant.quantity, 0)
 
     return (
         <div>
@@ -40,7 +41,7 @@ export default function CartDrawer() {
                     <CartProgress/>
                     <div className="overflow-auto p-4">
                         {checkoutProgress === "cart-page" && <CartItems />}
-                        {checkoutProgress === "payment-page" && <XenditPayment />}
+                        {checkoutProgress === "payment-page" && <XenditPayment totalPrice={totalPrice}/>}
                         {checkoutProgress === "confirmation-page" && <OrderConfirmation/>}
                     </div>
                 </DrawerContent>

@@ -1,107 +1,120 @@
-import NextAuth from "next-auth"
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
-import { db } from "@/server"
-import Google from "next-auth/providers/google"
-import Github from "next-auth/providers/github"
-import Credentials from 'next-auth/providers/credentials'
-import { loginSchema } from "@/types/login-schema"
-import { eq } from "drizzle-orm"
-import { accounts, users } from "./schema"
-import bcrypt from 'bcryptjs'
-import Stripe from "stripe"
- 
+import NextAuth from "next-auth";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { db } from "@/server";
+import Google from "next-auth/providers/google";
+import Github from "next-auth/providers/github";
+import Credentials from "next-auth/providers/credentials";
+import { loginSchema } from "@/types/login-schema";
+import { eq } from "drizzle-orm";
+import { accounts, users } from "./schema";
+import bcrypt from "bcryptjs";
+import { xenditClient } from "@/lib/xendit-client";
+import {
+  Customer as CustomerModel,
+  CustomerRequest,
+} from "xendit-node/customer/models";
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET!,
-  session: {strategy: 'jwt'},
+  session: { strategy: "jwt" },
   adapter: DrizzleAdapter(db),
   events: {
-    createUser: async ({user}) => {
-      const stripe = new Stripe(process.env.STRIPE_SECRET!, {apiVersion: '2024-06-20'})
-      const customer = await stripe.customers.create({
+    createUser: async ({ user }) => {
+      const { Customer } = xenditClient;
+      const customerData: CustomerRequest = {
+        referenceId: user.id!,
+        type: "INDIVIDUAL",
+        individualDetail: {
+          givenNames: user.name!,
+          surname: user.name!,
+        },
         email: user.email!,
-        name: user.name!
-      })
+      };
+      const customer: CustomerModel = await Customer.createCustomer({
+        data: customerData,
+      });
 
-      await db.update(users).set({
-        customerID: customer.id
-      }).where(eq(users.id, user.id!))
-    }
+      await db
+        .update(users)
+        .set({
+          customerID: customer.id,
+        })
+        .where(eq(users.id, user.id!));
+    },
   },
   callbacks: {
     //add more properties to the user session object
-    async session({session, token}){
-      if(session && token.sub){
-        session.user.id = token.sub
+    async session({ session, token }) {
+      if (session && token.sub) {
+        session.user.id = token.sub;
       }
-      if(session.user && token.role){
-        session.user.role = token.role as string
+      if (session.user && token.role) {
+        session.user.role = token.role as string;
       }
-      if(session.user){
-        session.user.name = token.name as string
-        session.user.email = token.email as string
-        session.user.image = token.image as string
-        session.user.isOAuth = token.isOAuth as boolean
-        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean
+      if (session.user) {
+        session.user.name = token.name as string;
+        session.user.email = token.email as string;
+        session.user.image = token.image as string;
+        session.user.isOAuth = token.isOAuth as boolean;
+        session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       }
 
       return session;
     },
     //add more properties to the token object
-    async jwt({token}){
-      if(!token.sub) return token
+    async jwt({ token }) {
+      if (!token.sub) return token;
       const existingUser = await db.query.users.findFirst({
-        where: eq(users.id, token.sub)
-      })
-      if(!existingUser) return token
+        where: eq(users.id, token.sub),
+      });
+      if (!existingUser) return token;
 
       const existingAccount = await db.query.accounts.findFirst({
-        where: eq(accounts.userId, token.sub)
-      })
+        where: eq(accounts.userId, token.sub),
+      });
 
-      token.isOAuth = existingAccount
-      token.name = existingUser.name
-      token.email = existingUser.email
-      token.role = existingUser.role
-      token.isTwoFactorEnabled = existingUser.twoFactorEnabled
-      token.image = existingUser.image
+      token.isOAuth = existingAccount;
+      token.name = existingUser.name;
+      token.email = existingUser.email;
+      token.role = existingUser.role;
+      token.isTwoFactorEnabled = existingUser.twoFactorEnabled;
+      token.image = existingUser.image;
 
-      return token
-    }
+      return token;
+    },
   },
   providers: [
     Google({
-        clientId: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        allowDangerousEmailAccountLinking: true,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     Github({
-        clientId: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        allowDangerousEmailAccountLinking: true,
+      clientId: process.env.GITHUB_CLIENT_ID,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     Credentials({
       authorize: async (credentials) => {
         //vailidate if login safely parse the credentials
-        const validatedFields = loginSchema.safeParse(credentials)
+        const validatedFields = loginSchema.safeParse(credentials);
 
-        if(validatedFields.success){
-          const {email, password} = validatedFields.data
+        if (validatedFields.success) {
+          const { email, password } = validatedFields.data;
 
           const user = await db.query.users.findFirst({
-            where: eq(users.email, email)
-          })
-          
-          if(!user || !user.password)
-            return null;
-          
-          const passwordMatch = await bcrypt.compare(password, user.password)
-          
-          if(passwordMatch)
-              return user;
+            where: eq(users.email, email),
+          });
+
+          if (!user || !user.password) return null;
+
+          const passwordMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordMatch) return user;
         }
 
         return null;
-      }
-    })
+      },
+    }),
   ],
-})
+});

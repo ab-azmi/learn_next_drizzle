@@ -11,8 +11,8 @@ import FormError from "./form-error"
 export const EmailVerificationForm = () => {
     const token = useSearchParams().get("token")
     const router = useRouter()
-    const [error, setError] = useState<string>('')
-    const [success, setSuccess] = useState<string>('')
+    const [error, setError] = useState<string>()
+    const [success, setSuccess] = useState<string>()
 
     const handleVerification = useCallback(async () => {
         if(success || error)
@@ -31,11 +31,11 @@ export const EmailVerificationForm = () => {
                 router.push("/")
             }
         })
-    }, [])
+    }, [token, success, error, router])
 
     useEffect(() => {
         handleVerification()
-    }, [])
+    }, [ handleVerification ])
 
     return (
         <AuthCard 
@@ -45,8 +45,8 @@ export const EmailVerificationForm = () => {
             showSocials={false}>
             <div className="flex items-center flex-col w-full justify-center">
                 <p>{!success && !error ? 'Verifying email...' : null}</p>
-                {success !== '' && <FormSuccess message={success}/> }
-                {error !== '' && <FormError message={error}/> }
+                {success && <FormSuccess message={success}/> }
+                {error && <FormError message={error}/> }
             </div>
         </AuthCard>
     )

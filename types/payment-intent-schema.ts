@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const paymentCartSchema = z.object({
+export const paymentCartSchema = z.object({
     quantity: z.number(),
     productID: z.number(),
     title: z.string(),
