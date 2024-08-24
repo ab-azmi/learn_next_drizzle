@@ -7,8 +7,15 @@ export const productSchema = z.object({
 })
 
 export const orderSchema = z.object({
+    id: z.number().optional(),
     total: z.number(),
     status: z.string(),
     paymentIntentID: z.string(),
-    products: z.array(productSchema)
+    products: z.array(productSchema),
+    invoiceID: z.string(),
+})
+
+export const updateStatusOrderSchema = z.object({
+    status: z.string(),
+    invoiceID: z.string(),
 })

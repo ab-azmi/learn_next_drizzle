@@ -23,6 +23,11 @@ export type CartState = {
     clearCart: () => void;
     cartOpen: boolean;
     setCartOpen: (open: boolean) => void;
+    unpayedInvoice: {
+        url: string;
+        id: string;
+    };
+    setUnpayedInvoice: (url: string, id: string) => void;
 }
 
 export const useCartStore = create<CartState>()(
@@ -58,6 +63,11 @@ export const useCartStore = create<CartState>()(
                 return { cart: state.cart };
             }),
         clearCart: () => set({ cart: [] }),
+        unpayedInvoice: {
+            url: '',
+            id: ''
+        },
+        setUnpayedInvoice: (url, id) => set({ unpayedInvoice: { url, id } })
 }), {name: 'cart-store'})
 
 )

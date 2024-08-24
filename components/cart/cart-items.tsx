@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { createXenditInvoice } from "@/server/actions/xendit/invoice";
 
 export default function CartItems() {
-    const { cart, addToCart, removeFromCart, setCheckoutProgress, clearCart } = useCartStore();
+    const { cart, addToCart, removeFromCart, setCheckoutProgress, setUnpayedInvoice } = useCartStore();
     const totalPrice = useMemo(() => {
         return cart.reduce((acc, item) => acc + item.price! * item.variant.quantity, 0)
     }, [cart])
@@ -28,7 +28,6 @@ export default function CartItems() {
     }, [totalPrice])
 
     const router = useRouter();
-    const [paymentMethod, setPaymentMethod] = useState('')
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,7 +45,8 @@ export default function CartItems() {
             .then((res) => {
                 if (res?.data?.success) {
                     // clearCart()
-                    // setCheckoutProgress('confirmation-page')
+                    setCheckoutProgress('payment-page')
+                    setUnpayedInvoice(res.data.success.invoiceUrl, res.data.success.externalId)
                     router.push(res.data.success.invoiceUrl)
                     return
                 }

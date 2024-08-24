@@ -2,7 +2,12 @@
 
 import { Button } from "@/components/ui/button";
 import { useCartStore } from "@/lib/client-store";
+import { db } from "@/server";
+import { updateStatusOrder } from "@/server/actions/update-status-order";
 import { createXenditInvoice } from "@/server/actions/xendit/invoice";
+import { auth } from "@/server/auth";
+import { orders } from "@/server/schema";
+import { and, eq } from "drizzle-orm";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -10,42 +15,22 @@ export default function XenditPayment(
     { totalPrice }: { totalPrice: number }
 ) {
     const router = useRouter();
-    const { cart, setCheckoutProgress, clearCart } = useCartStore();
-    const [paymentMethod, setPaymentMethod] = useState('')
+    const { cart, unpayedInvoice, clearCart } = useCartStore();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        await createXenditInvoice({
-            amount: totalPrice,
-            currency: 'IDR',
-            paymentMethod,
-            cart: cart.map(item => ({
-                quantity: item.variant.quantity,
-                productID: item.id,
-                title: item.name,
-                price: item.price,
-                image: item.image
-            }))
-        })
-        .then((res) => {
-            if(res?.data?.success) {
-                // clearCart()
-                // setCheckoutProgress('confirmation-page')
-                router.push(res.data.success.invoiceUrl)
-                return
-            }
-        })
-        
+    const handlePay = async () => {
+        if (unpayedInvoice.url !== '') {
+            router.push(unpayedInvoice.url);
+        }
     }
 
+
+
     return (
-        <form onSubmit={handleSubmit}>
-            
-            <Button
-                type="submit"
-                className=" my-4 w-full">
-                XenPay
-            </Button>
-        </form>
+        <Button
+            onClick={handlePay}
+            type="submit"
+            className=" my-4 w-full">
+            Go to payment
+        </Button>
     )
 }

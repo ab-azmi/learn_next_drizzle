@@ -13,7 +13,7 @@ export default function CartMessage(){
             initial={{ opacity:0, x:10 }}>
                 <DrawerTitle>
                     {checkoutProgress === "cart-page" && "Cart Items"}
-                    {checkoutProgress === "payment-page" && "Payment Method"}
+                    {checkoutProgress === "payment-page" && "Pay your order"}
                     {checkoutProgress === "confirmation-page" && "Confirmation"}
                 </DrawerTitle>
                 <DrawerDescription className="py-1">

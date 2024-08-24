@@ -33,7 +33,8 @@ export default async function Page() {
                     order: true
                 }
             }
-        }
+        },
+        orderBy: (orders, {desc}) => [desc(orders.created)]
     })
 
     return (

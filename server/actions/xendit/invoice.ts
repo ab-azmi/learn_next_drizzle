@@ -31,8 +31,9 @@ import { randomUUID } from "crypto";
 import { auth } from "@/server/auth";
 import { db } from "@/server";
 import { eq } from "drizzle-orm";
-import { users } from "@/server/schema";
+import { orders, users } from "@/server/schema";
 import { z } from "zod";
+import { useCartStore } from "@/lib/client-store";
 
 const { Invoice, PaymentRequest, PaymentMethod, Customer } = xenditClient;
 const action = createSafeActionClient();
@@ -140,7 +141,7 @@ export const createXenditInvoice = action
         };
       }
     );
-    
+
     const address: AddressObject = {
       country: "ID",
       streetLine1: "Jalan 1",
@@ -161,12 +162,8 @@ export const createXenditInvoice = action
 
     const fees: InvoiceFee[] = [
       {
-        type: "TAX",
-        value: 800,
-      },
-      {
-        type: "Bulshit",
-        value: 900,
+        type: "ADMIN",
+        value: 5000,
       },
     ];
 
@@ -176,25 +173,42 @@ export const createXenditInvoice = action
       invoicePaid: channels,
     };
 
+    const invoiceID = `invr-${randomUUID()}`;
+
     const data: CreateInvoiceRequest = {
       amount: amount,
       invoiceDuration: "172800",
-      externalId: `invr-${randomUUID()}`,
+      externalId: invoiceID,
       description: "Payment for T-Shirt and Pants",
       currency: "IDR",
       reminderTime: 1,
-      successRedirectUrl: "http://localhost:3000/",
+      successRedirectUrl: `http://localhost:3000/?status=success&invoice_id=${invoiceID}`,
+      failureRedirectUrl: `http://localhost:3000/?status=failure&invoice_id=${invoiceID}`,
       customer: custObj,
       items: items,
       fees: fees,
       customerNotificationPreference: notifications,
       payerEmail: customer.email!,
-      shouldSendEmail: true,
+      shouldSendEmail: false,
     };
 
     const response = await Invoice.createInvoice({
       data,
-    });
+    })
+      .then(async (res) => {
+        //create order in db
+        const order = await db.insert(orders).values({
+          userID: user.user.id,
+          total: amount,
+          status: "pending",
+          invoiceID: invoiceID,
+        }).returning();
+
+        return res;
+      })
+      .catch((err) => {
+        return err;
+      });
 
     // const response: PaymentRequestModel = await PaymentRequest.createPaymentRequest({data})
 
